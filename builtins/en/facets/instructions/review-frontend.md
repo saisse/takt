@@ -11,6 +11,12 @@ Review the changes from a frontend development perspective.
 **Note**: If this project does not include a frontend,
 proceed as no issues found.
 
+
+**Design decisions reference:**
+Review {report:coder-decisions.md} to understand the recorded design decisions.
+- Do not flag intentionally documented decisions as FP
+- However, also evaluate whether the design decisions themselves are sound, and flag any problems
+
 ## Judgment Procedure
 
 1. Review the change diff and detect issues based on the frontend development criteria above

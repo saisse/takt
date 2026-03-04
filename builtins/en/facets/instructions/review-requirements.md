@@ -6,6 +6,12 @@ Review the changes from a requirements fulfillment perspective.
 - Whether changes outside the scope (scope creep) have crept in
 - Whether there are any partial or missing implementations
 
+
+**Design decisions reference:**
+Review {report:coder-decisions.md} to understand the recorded design decisions.
+- Do not flag intentionally documented decisions as FP
+- However, also evaluate whether the design decisions themselves are sound, and flag any problems
+
 **Previous finding tracking (required):**
 - First, extract open findings from "Previous Response"
 - Assign `finding_id` to each finding and classify current status as `new / persists / resolved`

@@ -4,6 +4,12 @@ Review the changes from a security perspective. Check for the following vulnerab
 - Data exposure risks
 - Cryptographic weaknesses
 
+
+**Design decisions reference:**
+Review {report:coder-decisions.md} to understand the recorded design decisions.
+- Do not flag intentionally documented decisions as FP
+- However, also evaluate whether the design decisions themselves are sound, and flag any problems
+
 ## Judgment Procedure
 
 1. Review the change diff and detect issues based on the security criteria above

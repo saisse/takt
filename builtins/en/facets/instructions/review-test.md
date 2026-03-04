@@ -7,6 +7,12 @@ Review the changes from a test quality perspective.
 - Completeness (unnecessary tests, missing cases)
 - Appropriateness of mocks and fixtures
 
+
+**Design decisions reference:**
+Review {report:coder-decisions.md} to understand the recorded design decisions.
+- Do not flag intentionally documented decisions as FP
+- However, also evaluate whether the design decisions themselves are sound, and flag any problems
+
 ## Judgment Procedure
 
 1. Cross-reference the test plan/test scope reports in the Report Directory with the implemented tests

@@ -11,6 +11,12 @@ AI-specific issue review is not needed (already covered by the ai_review movemen
 **Note**: If this project does not use the CQRS+ES pattern,
 review from a general domain design perspective instead.
 
+
+**Design decisions reference:**
+Review {report:coder-decisions.md} to understand the recorded design decisions.
+- Do not flag intentionally documented decisions as FP
+- However, also evaluate whether the design decisions themselves are sound, and flag any problems
+
 ## Judgment Procedure
 
 1. Review the change diff and detect issues based on the CQRS and Event Sourcing criteria above

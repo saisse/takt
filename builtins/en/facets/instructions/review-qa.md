@@ -7,6 +7,12 @@ Review the changes from a quality assurance perspective.
 - Logging and monitoring
 - Maintainability
 
+
+**Design decisions reference:**
+Review {report:coder-decisions.md} to understand the recorded design decisions.
+- Do not flag intentionally documented decisions as FP
+- However, also evaluate whether the design decisions themselves are sound, and flag any problems
+
 **Previous finding tracking (required):**
 - First, extract open findings from "Previous Response"
 - Assign `finding_id` to each finding and classify current status as `new / persists / resolved`

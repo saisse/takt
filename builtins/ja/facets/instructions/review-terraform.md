@@ -11,6 +11,12 @@ AI特有の問題はレビューしないでください（ai_reviewムーブメ
 - コストトレードオフの文書化
 - 未使用の variable / output / data source
 
+
+**設計判断の参照:**
+{report:coder-decisions.md} を確認し、記録された設計判断を把握してください。
+- 記録された意図的な判断は FP として指摘しない
+- ただし設計判断自体の妥当性も評価し、問題がある場合は指摘する
+
 **前回指摘の追跡（必須）:**
 - まず「Previous Response」から前回の open findings を抽出する
 - 各 finding に `finding_id` を付け、今回の状態を `new / persists / resolved` で判定する
