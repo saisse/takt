@@ -840,9 +840,12 @@ describe('branchExists remote tracking branch fallback', () => {
 describe('autoFetch: true — fetch, rev-parse origin/<branch>, reset --hard', () => {
   it('should run git fetch, resolve origin/<branch> commit hash, and reset --hard in the clone', () => {
     // Given: autoFetch is enabled in global config.
-    // resolveBaseBranch calls resolveConfigValue twice (baseBranch then autoFetch),
-    // each triggers one loadGlobalConfig() call — queue two return values.
+    // loadGlobalConfig() is called by resolveConfigValue for:
+    //   1. worktreeDir (resolveClonePath)
+    //   2. baseBranch (resolveBaseBranch)
+    //   3. autoFetch (resolveBaseBranch)
     vi.mocked(loadGlobalConfig)
+      .mockReturnValueOnce({ autoFetch: true } as ReturnType<typeof loadGlobalConfig>)
       .mockReturnValueOnce({ autoFetch: true } as ReturnType<typeof loadGlobalConfig>)
       .mockReturnValueOnce({ autoFetch: true } as ReturnType<typeof loadGlobalConfig>);
 

@@ -91,9 +91,6 @@ export class CloneManager {
   }
 
   createSharedClone(projectDir: string, options: WorktreeOptions): WorktreeResult {
-    const requestedBaseBranch = options.baseBranch;
-    const { branch: baseBranch, fetchedCommit } = CloneManager.resolveBaseBranch(projectDir, requestedBaseBranch);
-
     const clonePath = CloneManager.resolveClonePath(projectDir, options);
     const branch = CloneManager.resolveBranchName(options);
     const cloneSubmoduleOptions = resolveCloneSubmoduleOptions(projectDir);
@@ -106,6 +103,7 @@ export class CloneManager {
     if (branchExists(projectDir, branch)) {
       cloneAndIsolate(projectDir, clonePath, branch);
     } else {
+      const { branch: baseBranch, fetchedCommit } = CloneManager.resolveBaseBranch(projectDir, options.baseBranch);
       cloneAndIsolate(projectDir, clonePath, baseBranch);
       if (fetchedCommit) {
         execFileSync('git', ['reset', '--hard', fetchedCommit], { cwd: clonePath, stdio: 'pipe' });
