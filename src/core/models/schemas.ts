@@ -135,6 +135,7 @@ export const ProviderPermissionProfilesSchema = z.object({
   codex: ProviderPermissionProfileSchema.optional(),
   opencode: ProviderPermissionProfileSchema.optional(),
   cursor: ProviderPermissionProfileSchema.optional(),
+  copilot: ProviderPermissionProfileSchema.optional(),
   mock: ProviderPermissionProfileSchema.optional(),
 }).optional();
 
