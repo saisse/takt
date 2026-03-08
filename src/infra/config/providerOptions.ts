@@ -46,6 +46,9 @@ type RawProviderOptions = {
   kiro?: {
     agent?: string;
   };
+  gemini?: {
+    allowed_tools?: string[];
+  };
 };
 
 /** Convert raw YAML provider_options (snake_case) to internal format (camelCase). */
@@ -124,6 +127,9 @@ export function normalizeProviderOptions(
   if (options.kiro?.agent !== undefined) {
     result.kiro = { agent: options.kiro.agent };
   }
+  if (options.gemini?.allowed_tools !== undefined) {
+    result.gemini = { allowedTools: options.gemini.allowed_tools };
+  }
   if (
     options.claude_terminal?.backend !== undefined
     || options.claude_terminal?.timeout_ms !== undefined
@@ -189,6 +195,14 @@ export function mergeProviderOptions(
         ...result.kiro,
         ...(layer.kiro.agent !== undefined
           ? { agent: layer.kiro.agent }
+          : {}),
+      };
+    }
+    if (layer.gemini) {
+      result.gemini = {
+        ...result.gemini,
+        ...(layer.gemini.allowedTools !== undefined
+          ? { allowedTools: layer.gemini.allowedTools }
           : {}),
       };
     }
@@ -345,6 +359,12 @@ export function resolveEffectiveProviderOptions(
     stepOptions?.kiro?.agent,
     resolveProviderOptionOrigin(originResolver, 'kiro.agent', source),
   );
+  const geminiAllowedTools = selectProviderValue(
+    resolvedConfigOptions.gemini?.allowedTools,
+    personaOptions?.gemini?.allowedTools,
+    stepOptions?.gemini?.allowedTools,
+    resolveProviderOptionOrigin(originResolver, 'gemini.allowedTools', source),
+  );
   const claudeTerminalBackend = selectProviderValue(
     resolvedConfigOptions.claudeTerminal?.backend,
     personaOptions?.claudeTerminal?.backend,
@@ -392,6 +412,7 @@ export function resolveEffectiveProviderOptions(
         : undefined,
     copilot: copilotEffort !== undefined ? { effort: copilotEffort } : undefined,
     kiro: kiroAgent !== undefined ? { agent: kiroAgent } : undefined,
+    gemini: geminiAllowedTools !== undefined ? { allowedTools: geminiAllowedTools } : undefined,
     claudeTerminal:
       claudeTerminalBackend !== undefined
       || claudeTerminalTimeoutMs !== undefined
@@ -408,7 +429,7 @@ export function resolveEffectiveProviderOptions(
         : undefined,
   };
 
-  return result.codex || result.opencode || result.claude || result.copilot || result.kiro || result.claudeTerminal
+  return result.codex || result.opencode || result.claude || result.copilot || result.kiro || result.gemini || result.claudeTerminal
     ? result
     : undefined;
 }
@@ -446,6 +467,9 @@ function stripClaudeAllowedTools(
       : {}),
     ...(providerOptions.kiro !== undefined
       ? { kiro: { ...providerOptions.kiro } }
+      : {}),
+    ...(providerOptions.gemini !== undefined
+      ? { gemini: { ...providerOptions.gemini } }
       : {}),
     ...(providerOptions.claudeTerminal !== undefined
       ? { claudeTerminal: { ...providerOptions.claudeTerminal } }
@@ -498,6 +522,7 @@ export const PROVIDER_OPTION_PATHS = [
   'opencode.allowedTools',
   'copilot.effort',
   'kiro.agent',
+  'gemini.allowedTools',
   'claudeTerminal.backend',
   'claudeTerminal.timeoutMs',
   'claudeTerminal.keepSession',

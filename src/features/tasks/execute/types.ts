@@ -95,6 +95,8 @@ export interface WorkflowExecutionOptions {
   taskColorIndex?: number;
   /** Current task issue number for system-step context resolution */
   currentTaskIssueNumber?: number;
+  /** Bypass all permission checks and automatic authorization prompts (e.g. for CI) */
+  bypassPermissions?: boolean;
 }
 
 export interface TaskExecutionOptions {

@@ -85,6 +85,7 @@ takt list
 - `copilot` — [GitHub Copilot CLI](https://docs.github.com/en/copilot/github-copilot-in-the-cli)
 - `cursor` — [Cursor Agent](https://docs.cursor.com/)
 - `kiro` — [Kiro CLI](https://kiro.dev/docs/cli/headless/)
+- `gemini` — [Gemini CLI](https://github.com/google-gemini/gemini-cli)
 
 任意:
 
@@ -230,7 +231,7 @@ workflow ファイルの正式ディレクトリ名は `workflows/` です。
 最小限の `~/.takt/config.yaml` は次の通りです。
 
 ```yaml
-provider: codex    # claude, claude-sdk, claude-terminal, codex, opencode, cursor, copilot, kiro, or mock
+provider: codex    # claude, claude-sdk, claude-terminal, codex, opencode, cursor, copilot, kiro, gemini, or mock
 model: gpt-5.5       # プロバイダーにそのまま渡されます
 language: ja        # en or ja
 ```

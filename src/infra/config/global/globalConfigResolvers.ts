@@ -99,6 +99,19 @@ export function resolveKiroCliPath(): string | undefined {
   return validateCliPath(config.kiroCliPath, 'kiro_cli_path');
 }
 
+export function resolveGeminiCliPath(): string | undefined {
+  const envPath = process.env[envVarNameFromPath('gemini_cli_path')];
+  if (envPath !== undefined) {
+    return validateCliPath(envPath, 'TAKT_GEMINI_CLI_PATH');
+  }
+
+  const config: GlobalConfig = loadGlobalConfig();
+  if (config.geminiCliPath === undefined) {
+    return undefined;
+  }
+  return validateCliPath(config.geminiCliPath, 'gemini_cli_path');
+}
+
 export function resolveCopilotGithubToken(): string | undefined {
   const envKey = process.env[envVarNameFromPath('copilot_github_token')];
   if (envKey) return envKey;
@@ -115,4 +128,15 @@ export function resolveKiroApiKey(): string | undefined {
   if (config.kiroApiKey) return config.kiroApiKey;
 
   return process.env.KIRO_API_KEY;
+}
+
+export function resolveGeminiApiKey(): string | undefined {
+  const envKey = process.env[envVarNameFromPath('gemini_api_key')];
+  if (envKey) return envKey;
+
+  const googleEnvKey = process.env[envVarNameFromPath('google_api_key')];
+  if (googleEnvKey) return googleEnvKey;
+
+  const config = loadGlobalConfig();
+  return config.geminiApiKey ?? config.googleApiKey;
 }

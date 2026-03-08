@@ -18,10 +18,12 @@ export {
   resolveCursorCliPath,
   resolveCopilotCliPath,
   resolveKiroCliPath,
+  resolveGeminiCliPath,
   resolveCopilotGithubToken,
   resolveKiroApiKey,
   resolveOpencodeApiKey,
   resolveCursorApiKey,
+  resolveGeminiApiKey,
   validateCliPath,
 } from './globalConfig.js';
 

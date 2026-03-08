@@ -1,4 +1,6 @@
 import { WorkflowEngine, createDenyAskUserQuestionHandler } from '../../../core/workflow/index.js';
+import { createAskUserQuestionHandler } from '../../../infra/claude/ask-user-question-handler.js';
+import { getProvider } from '../../../infra/providers/index.js';
 import type { WorkflowConfig, WorkflowResumePointEntry } from '../../../core/models/index.js';
 import type { WorkflowExecutionResult, WorkflowExecutionOptions } from './types.js';
 import { detectRuleIndex } from '../../../shared/utils/ruleIndex.js';
@@ -128,6 +130,20 @@ async function executeWorkflowInternal(
 ): Promise<WorkflowExecutionResult> {
   const parentRunPid = process.pid;
   const bootstrap = await createWorkflowExecutionBootstrap(workflowConfig, task, cwd, options);
+
+  // Provider pre-flight check: handle any provider-specific setup (like folder authorization)
+  // before starting the engine.
+  if (bootstrap.currentProvider) {
+    const provider = getProvider(bootstrap.currentProvider);
+    if (typeof provider.preflight === 'function') {
+      await provider.preflight({
+        cwd,
+        onAskUserQuestion: createAskUserQuestionHandler(),
+        bypassPermissions: options.bypassPermissions,
+      });
+    }
+  }
+
   const workflowExecutionContext = createWorkflowExecutionContext(workflowConfig, options.projectCwd);
   const phase1ProcessSafetyByStep = resolvePhase1ProcessSafetyByStep(workflowConfig, parentRunPid);
   let engine: WorkflowEngine | null = null;

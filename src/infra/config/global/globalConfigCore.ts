@@ -155,6 +155,7 @@ export class GlobalConfigManager {
       cursorCliPath: expandOptionalHomePath(parsed.cursor_cli_path),
       copilotCliPath: expandOptionalHomePath(parsed.copilot_cli_path),
       kiroCliPath: expandOptionalHomePath(parsed.kiro_cli_path),
+      geminiCliPath: expandOptionalHomePath(parsed.gemini_cli_path),
       copilotGithubToken: parsed.copilot_github_token,
       kiroApiKey: parsed.kiro_api_key,
       opencodeApiKey: parsed.opencode_api_key,

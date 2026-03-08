@@ -17,6 +17,10 @@ describe('Claude provider split (Zod)', () => {
     it('Given claude string, When parse, Then succeeds (headless id)', () => {
       expect(ProviderTypeSchema.parse('claude')).toBe('claude');
     });
+
+    it('Given gemini string, When parse, Then succeeds', () => {
+      expect(ProviderTypeSchema.parse('gemini')).toBe('gemini');
+    });
   });
 
   describe('ProviderReferenceSchema', () => {

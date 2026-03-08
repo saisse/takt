@@ -270,9 +270,6 @@ export interface GlobalConfig extends Omit<ProjectConfig, 'submodules' | 'withSu
   /** OpenAI API key for Codex SDK (overridden by TAKT_OPENAI_API_KEY env var) */
   openaiApiKey?: string;
   /** @globalOnly */
-  /** Gemini API key (overridden by TAKT_GEMINI_API_KEY env var) */
-  geminiApiKey?: string;
-  /** @globalOnly */
   /** Google API key (overridden by TAKT_GOOGLE_API_KEY env var) */
   googleApiKey?: string;
   /** @globalOnly */
@@ -291,6 +288,9 @@ export interface GlobalConfig extends Omit<ProjectConfig, 'submodules' | 'withSu
   /** External cursor-agent CLI path (overridden by TAKT_CURSOR_CLI_PATH env var) */
   cursorCliPath?: string;
   /** @globalOnly */
+  /** External Gemini CLI path (overridden by TAKT_GEMINI_CLI_PATH env var) */
+  geminiCliPath?: string;
+  /** @globalOnly */
   /** External Copilot CLI path (overridden by TAKT_COPILOT_CLI_PATH env var) */
   copilotCliPath?: string;
   /** @globalOnly */
@@ -308,6 +308,9 @@ export interface GlobalConfig extends Omit<ProjectConfig, 'submodules' | 'withSu
   /** @globalOnly */
   /** Cursor API key for Cursor Agent CLI/API (overridden by TAKT_CURSOR_API_KEY env var) */
   cursorApiKey?: string;
+  /** @globalOnly */
+  /** Gemini API key (overridden by TAKT_GEMINI_API_KEY env var) */
+  geminiApiKey?: string;
   /** @globalOnly */
   /** Path to bookmarks file (default: ~/.takt/preferences/bookmarks.yaml) */
   bookmarksFile?: string;

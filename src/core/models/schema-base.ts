@@ -96,6 +96,7 @@ export const ProviderProfileNameSchema = z.enum([
   'cursor',
   'copilot',
   'kiro',
+  'gemini',
   'mock',
 ]);
 export const ProviderTypeSchema = ProviderProfileNameSchema;

@@ -78,6 +78,10 @@ export interface KiroProviderOptions {
   agent?: string;
 }
 
+export interface GeminiProviderOptions {
+  allowedTools?: string[];
+}
+
 export interface StepProviderOptions {
   codex?: CodexProviderOptions;
   opencode?: OpenCodeProviderOptions;
@@ -85,6 +89,7 @@ export interface StepProviderOptions {
   claudeTerminal?: ClaudeTerminalProviderOptions;
   copilot?: CopilotProviderOptions;
   kiro?: KiroProviderOptions;
+  gemini?: GeminiProviderOptions;
 }
 
 export type WorkflowStepKind = 'agent' | 'system' | 'workflow_call';

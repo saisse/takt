@@ -58,6 +58,7 @@ const {
   resolveCopilotGithubToken,
   resolveOpencodeApiKey,
   resolveCursorApiKey,
+  resolveGeminiApiKey,
   validateCliPath,
   invalidateGlobalConfigCache,
 } = await import('../infra/config/global/globalConfig.js');
@@ -904,5 +905,79 @@ describe('resolveCopilotGithubToken', () => {
     writeFileSync(configPath, 'language: [\n', 'utf-8');
 
     expect(() => resolveCopilotGithubToken()).toThrow();
+  });
+});
+
+describe('resolveGeminiApiKey', () => {
+  beforeEach(() => {
+    invalidateGlobalConfigCache();
+    mkdirSync(taktDir, { recursive: true });
+    delete process.env['TAKT_GEMINI_API_KEY'];
+    delete process.env['TAKT_GOOGLE_API_KEY'];
+  });
+
+  afterEach(() => {
+    delete process.env['TAKT_GEMINI_API_KEY'];
+    delete process.env['TAKT_GOOGLE_API_KEY'];
+    rmSync(testDir, { recursive: true, force: true });
+  });
+
+  it('should return TAKT_GEMINI_API_KEY env var with highest priority', () => {
+    process.env['TAKT_GEMINI_API_KEY'] = 'gemini-from-env';
+    process.env['TAKT_GOOGLE_API_KEY'] = 'google-from-env';
+    const yaml = [
+      'language: en',
+      'provider: gemini',
+      'gemini_api_key: gemini-from-yaml',
+      'google_api_key: google-from-yaml',
+    ].join('\n');
+    writeFileSync(configPath, yaml, 'utf-8');
+
+    expect(resolveGeminiApiKey()).toBe('gemini-from-env');
+  });
+
+  it('should fall back to TAKT_GOOGLE_API_KEY when TAKT_GEMINI_API_KEY is not set', () => {
+    process.env['TAKT_GOOGLE_API_KEY'] = 'google-from-env';
+    const yaml = [
+      'language: en',
+      'provider: gemini',
+      'gemini_api_key: gemini-from-yaml',
+    ].join('\n');
+    writeFileSync(configPath, yaml, 'utf-8');
+
+    expect(resolveGeminiApiKey()).toBe('google-from-env');
+  });
+
+  it('should fall back to config gemini_api_key when env vars are not set', () => {
+    const yaml = [
+      'language: en',
+      'provider: gemini',
+      'gemini_api_key: gemini-from-yaml',
+      'google_api_key: google-from-yaml',
+    ].join('\n');
+    writeFileSync(configPath, yaml, 'utf-8');
+
+    expect(resolveGeminiApiKey()).toBe('gemini-from-yaml');
+  });
+
+  it('should fall back to config google_api_key when gemini_api_key is not set', () => {
+    const yaml = [
+      'language: en',
+      'provider: gemini',
+      'google_api_key: google-from-yaml',
+    ].join('\n');
+    writeFileSync(configPath, yaml, 'utf-8');
+
+    expect(resolveGeminiApiKey()).toBe('google-from-yaml');
+  });
+
+  it('should return undefined when neither env vars nor config keys are set', () => {
+    const yaml = [
+      'language: en',
+      'provider: gemini',
+    ].join('\n');
+    writeFileSync(configPath, yaml, 'utf-8');
+
+    expect(resolveGeminiApiKey()).toBeUndefined();
   });
 });

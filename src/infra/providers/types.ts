@@ -33,6 +33,7 @@ export interface ProviderCallOptions {
   cursorApiKey?: string;
   copilotGithubToken?: string;
   kiroApiKey?: string;
+  geminiApiKey?: string;
   outputSchema?: Record<string, unknown>;
   imageAttachments?: ProviderImageAttachment[];
   childProcessEnv?: Readonly<Record<string, string>>;
@@ -48,6 +49,7 @@ export interface Provider {
   getRuntimeInstructions(): string | null;
   keepsAllowedToolWithoutEdit(tool: string): boolean;
   setup(config: AgentSetup): ProviderAgent;
+  preflight?(options: ProviderCallOptions): Promise<void>;
 }
 
 export type ProviderType = SharedProviderType;

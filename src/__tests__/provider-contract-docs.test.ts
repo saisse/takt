@@ -12,6 +12,7 @@ const providerValues = [
   'cursor',
   'copilot',
   'kiro',
+  'gemini',
   'mock',
 ] as const;
 

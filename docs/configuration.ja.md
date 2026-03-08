@@ -14,7 +14,7 @@ phase 粒度の usage events と集計方法は [Observability Guide](./observab
 language: en                  # UI 言語: 'en' または 'ja'
 logging:
   level: info                 # ログレベル: debug, info, warn, error
-provider: claude              # デフォルト provider: claude, claude-sdk, claude-terminal, codex, opencode, cursor, copilot, kiro, または mock
+provider: claude              # デフォルト provider: claude, claude-sdk, claude-terminal, codex, opencode, cursor, copilot, kiro, gemini, または mock
 model: sonnet                 # デフォルトモデル（省略可、provider にそのまま渡される）
 branch_name_strategy: romaji  # ブランチ名生成方式: 'romaji'（高速）または 'ai'（低速）
 prevent_sleep: false          # 実行中に macOS のアイドルスリープを防止（caffeinate）
@@ -63,22 +63,24 @@ interactive_preview_steps: 3  # インタラクティブモードでの step プ
 #     default_permission_mode: edit
 
 # API キー設定（省略可）
-# 環境変数 TAKT_ANTHROPIC_API_KEY / TAKT_OPENAI_API_KEY / TAKT_OPENCODE_API_KEY / TAKT_CURSOR_API_KEY / TAKT_COPILOT_GITHUB_TOKEN / TAKT_KIRO_API_KEY で上書き可能
+# 環境変数 TAKT_ANTHROPIC_API_KEY / TAKT_OPENAI_API_KEY / TAKT_OPENCODE_API_KEY / TAKT_CURSOR_API_KEY / TAKT_COPILOT_GITHUB_TOKEN / TAKT_KIRO_API_KEY / TAKT_GEMINI_API_KEY で上書き可能
 # anthropic_api_key: sk-ant-...  # Claude（Anthropic）用
 # openai_api_key: sk-...         # Codex（OpenAI）用
 # opencode_api_key: ...          # OpenCode 用
 # cursor_api_key: ...            # Cursor Agent 用（省略時は login セッションにフォールバック）
+# gemini_api_key: ...            # Gemini CLI 用
 # copilot_github_token: ...      # Copilot 用（GitHub トークン）
 # kiro_api_key: ...              # Kiro CLI 用
 
 # CLI パス上書き（省略可）
 # provider の CLI バイナリを上書き（実行可能ファイルの絶対パスが必要）
-# 環境変数 TAKT_CLAUDE_CLI_PATH / TAKT_CODEX_CLI_PATH / TAKT_CURSOR_CLI_PATH / TAKT_COPILOT_CLI_PATH / TAKT_KIRO_CLI_PATH で上書き可能
+# 環境変数 TAKT_CLAUDE_CLI_PATH / TAKT_CODEX_CLI_PATH / TAKT_CURSOR_CLI_PATH / TAKT_COPILOT_CLI_PATH / TAKT_KIRO_CLI_PATH / TAKT_GEMINI_CLI_PATH で上書き可能
 # claude_cli_path: /usr/local/bin/claude
 # codex_cli_path: /usr/local/bin/codex
 # cursor_cli_path: /usr/local/bin/cursor-agent
 # copilot_cli_path: /usr/local/bin/github-copilot-cli
 # kiro_cli_path: /usr/local/bin/kiro-cli
+# gemini_cli_path: /usr/local/bin/gemini
 
 # VCS プロバイダー（省略可）
 # git リモート URL から自動検出（github.com → github、gitlab.com → gitlab）
@@ -130,7 +132,7 @@ interactive_preview_steps: 3  # インタラクティブモードでの step プ
 |-----------|------|---------|------|
 | `language` | `"en"` \| `"ja"` | `"en"` | UI 言語 |
 | `logging.level` | `"debug"` \| `"info"` \| `"warn"` \| `"error"` | `"info"` | ログレベル |
-| `provider` | `"claude"` \| `"claude-sdk"` \| `"claude-terminal"` \| `"codex"` \| `"opencode"` \| `"cursor"` \| `"copilot"` \| `"kiro"` \| `"mock"` | `"claude"` | デフォルト AI provider（`claude` = ヘッドレス CLI モード、`claude-sdk` = SDK/API モード、`claude-terminal` = experimental interactive terminal モード） |
+| `provider` | `"claude"` \| `"claude-sdk"` \| `"claude-terminal"` \| `"codex"` \| `"opencode"` \| `"cursor"` \| `"copilot"` \| `"kiro"` \| `"gemini"` \| `"mock"` | `"claude"` | デフォルト AI provider（`claude` = ヘッドレス CLI モード、`claude-sdk` = SDK/API モード、`claude-terminal` = experimental interactive terminal モード） |
 | `logging.trace` | boolean | `false` | trace レベルのログを有効化（高頻度のデバッグノイズを抑制） |
 | `model` | string | - | デフォルトモデル名（provider にそのまま渡される） |
 | `branch_name_strategy` | `"romaji"` \| `"ai"` | `"romaji"` | ブランチ名生成方式 |
@@ -155,10 +157,12 @@ interactive_preview_steps: 3  # インタラクティブモードでの step プ
 | `cursor_api_key` | string | - | Cursor API キー（省略時は login セッションへフォールバック） |
 | `copilot_github_token` | string | - | Copilot CLI 認証用 GitHub トークン |
 | `kiro_api_key` | string | - | Kiro API キー |
+| `gemini_api_key` | string | - | Gemini API キー |
 | `codex_cli_path` | string | - | Codex CLI バイナリパス上書き（絶対パス） |
 | `cursor_cli_path` | string | - | Cursor Agent CLI バイナリパス上書き（絶対パス） |
 | `copilot_cli_path` | string | - | Copilot CLI バイナリパス上書き（絶対パス） |
 | `kiro_cli_path` | string | - | Kiro CLI バイナリパス上書き（絶対パス） |
+| `gemini_cli_path` | string | - | Gemini CLI バイナリパス上書き（絶対パス） |
 | `enable_builtin_workflows` | boolean | `true` | ビルトイン workflow の有効化 |
 | `disabled_builtins` | string[] | `[]` | 無効化するビルトイン workflow（YAML の `name`） |
 | `pipeline` | object | - | pipeline テンプレート設定 |
@@ -222,7 +226,7 @@ concurrency: 2                # このプロジェクトでの takt run 並列�
 
 | フィールド | 型 | デフォルト | 説明 |
 |-----------|------|---------|------|
-| `provider` | `"claude"` \| `"claude-sdk"` \| `"claude-terminal"` \| `"codex"` \| `"opencode"` \| `"cursor"` \| `"copilot"` \| `"kiro"` \| `"mock"` | - | provider 上書き |
+| `provider` | `"claude"` \| `"claude-sdk"` \| `"claude-terminal"` \| `"codex"` \| `"opencode"` \| `"cursor"` \| `"copilot"` \| `"kiro"` \| `"gemini"` \| `"mock"` | - | provider 上書き |
 | `model` | string | - | モデル名の上書き（provider にそのまま渡される） |
 | `allow_git_hooks` | boolean | `false` | TAKT 管理の auto-commit 時に git hooks を許可 |
 | `allow_git_filters` | boolean | `false` | TAKT 管理の auto-commit 時に git filter を許可 |
@@ -245,7 +249,7 @@ concurrency: 2                # このプロジェクトでの takt run 並列�
 
 ## API キー設定
 
-TAKT は Claude、Codex、OpenCode、Cursor、Copilot、Kiro provider をサポートしています。Claude/Codex/OpenCode/Kiro は API キーを使い、Cursor は API キーまたは `cursor-agent login` セッションで認証でき、Copilot は GitHub トークンを使います。
+TAKT は Claude、Codex、OpenCode、Cursor、Copilot、Kiro, Gemini provider をサポートしています。Claude/Codex/OpenCode/Kiro/Gemini は API キーを使い、Cursor は API キーまたは `cursor-agent login` セッションで認証でき、Copilot は GitHub トークンを使います。
 
 ### 環境変数（推奨）
 
@@ -267,6 +271,9 @@ export TAKT_COPILOT_GITHUB_TOKEN=ghp_...
 
 # Kiro CLI 用（TAKT_KIRO_API_KEY と kiro_api_key が未設定の場合は KIRO_API_KEY も使用）
 export TAKT_KIRO_API_KEY=...
+
+# Gemini CLI 用
+export TAKT_GEMINI_API_KEY=...
 ```
 
 ### 設定ファイル
@@ -279,6 +286,7 @@ opencode_api_key: ...          # OpenCode 用
 cursor_api_key: ...            # Cursor Agent 用（省略可）
 copilot_github_token: ghp_...  # GitHub Copilot CLI 用
 kiro_api_key: ...              # Kiro CLI 用
+gemini_api_key: ...            # Gemini CLI 用
 ```
 
 ### 優先順位
@@ -293,6 +301,7 @@ kiro_api_key: ...              # Kiro CLI 用
 | Cursor Agent | `TAKT_CURSOR_API_KEY` | `cursor_api_key` |
 | GitHub Copilot CLI | `TAKT_COPILOT_GITHUB_TOKEN` | `copilot_github_token` |
 | Kiro CLI | `TAKT_KIRO_API_KEY`（`KIRO_API_KEY` フォールバック） | `kiro_api_key` |
+| Gemini CLI | `TAKT_GEMINI_API_KEY` | `gemini_api_key` |
 
 ### セキュリティ
 
@@ -303,6 +312,7 @@ kiro_api_key: ...              # Kiro CLI 用
 - API キーを設定すれば、対応する CLI ツール（Claude Code、Codex、OpenCode）のインストールは不要です。TAKT が対応する API を直接呼び出します。
 - Copilot provider は `copilot` CLI のインストールが必要です。GitHub トークンは認証に使用されます。
 - Kiro provider は `kiro-cli` CLI のインストールが必要です。`TAKT_KIRO_API_KEY` / `kiro_api_key` は子プロセスの `KIRO_API_KEY` として渡されます。どちらも未設定の場合は公式の `KIRO_API_KEY` 環境変数を使用します。
+- Gemini provider は `gemini` CLI のインストールが必要です。API キーは `TAKT_GEMINI_API_KEY` または `gemini_api_key` でも指定できます。
 
 ### CLI パス上書き
 
@@ -314,6 +324,7 @@ export TAKT_CODEX_CLI_PATH=/usr/local/bin/codex
 export TAKT_CURSOR_CLI_PATH=/usr/local/bin/cursor-agent
 export TAKT_COPILOT_CLI_PATH=/usr/local/bin/github-copilot-cli
 export TAKT_KIRO_CLI_PATH=/usr/local/bin/kiro-cli
+export TAKT_GEMINI_CLI_PATH=/usr/local/bin/gemini
 ```
 
 ```yaml
@@ -323,6 +334,7 @@ codex_cli_path: /usr/local/bin/codex
 cursor_cli_path: /usr/local/bin/cursor-agent
 copilot_cli_path: /usr/local/bin/github-copilot-cli
 kiro_cli_path: /usr/local/bin/kiro-cli
+gemini_cli_path: /usr/local/bin/gemini
 ```
 
 | Provider | 環境変数 | 設定キー |
@@ -332,6 +344,7 @@ kiro_cli_path: /usr/local/bin/kiro-cli
 | Cursor Agent | `TAKT_CURSOR_CLI_PATH` | `cursor_cli_path` |
 | Copilot | `TAKT_COPILOT_CLI_PATH` | `copilot_cli_path` |
 | Kiro CLI | `TAKT_KIRO_CLI_PATH` | `kiro_cli_path` |
+| Gemini | `TAKT_GEMINI_CLI_PATH` | `gemini_cli_path` |
 
 パスは実行可能ファイルの絶対パスである必要があります。環境変数は設定ファイルの値よりも優先されます。CLI パス上書きはグローバル専用の設定値です。プロジェクトレベルの `.takt/config.yaml` ではなく、`~/.takt/config.yaml` または対応する環境変数で設定してください。
 
@@ -355,6 +368,8 @@ TAKT のモデル選択は 2 段階で解決されます。
 **GitHub Copilot CLI** は `model` を `copilot --model <model>` にそのまま渡します。省略時は Copilot CLI のデフォルトが使用されます。
 
 **Kiro CLI** の初期実装では `model` を CLI フラグとして渡しません。Kiro 側のデフォルトモデル設定を使用してください。
+
+**Gemini CLI** は `model` を `gemini -m <model>` にそのまま渡します。省略時は Gemini CLI のデフォルトが使用されます。
 
 ### 設定例
 
@@ -383,11 +398,11 @@ Provider プロファイルを使用すると、各 provider にデフォルト�
 
 TAKT は provider 非依存の3つのパーミッションモードを使用します。
 
-| モード | 説明 | Claude | Codex | OpenCode | Cursor Agent | Copilot | Kiro CLI |
+| モード | 説明 | Claude | Codex | OpenCode | Cursor Agent | Copilot | Kiro CLI | Gemini CLI |
 |--------|------|--------|-------|----------|--------------|---------|----------|
-| `readonly` | 読み取り専用、ファイル変更不可 | `default` | `read-only` | `read-only` | デフォルトフラグ（`--force` なし） | フラグなし | `--trust-tools=read,grep` |
-| `edit` | 確認付きでファイル編集を許可 | `acceptEdits` | `workspace-write` | `workspace-write` | デフォルトフラグ（`--force` なし） | `--allow-all-tools --no-ask-user` | `--trust-tools=read,grep,write,shell` |
-| `full` | すべてのパーミッションチェックをバイパス | `bypassPermissions` | `danger-full-access` | `danger-full-access` | `--force` | `--yolo` | `--trust-all-tools` |
+| `readonly` | 読み取り専用、ファイル変更不可 | `default` | `read-only` | `read-only` | デフォルトフラグ（`--force` なし） | フラグなし | `--trust-tools=read,grep` | `--approval-mode plan` |
+| `edit` | 確認付きでファイル編集を許可 | `acceptEdits` | `workspace-write` | `workspace-write` | デフォルトフラグ（`--force` なし） | `--allow-all-tools --no-ask-user` | `--trust-tools=read,grep,write,shell` | `--approval-mode auto_edit` |
+| `full` | すべてのパーミッションチェックをバイパス | `bypassPermissions` | `danger-full-access` | `danger-full-access` | `--force` | `--yolo` | `--trust-all-tools` | `--approval-mode yolo` |
 
 ### 設定方法
 

@@ -26,8 +26,10 @@ export {
   resolveCursorCliPath,
   resolveCopilotCliPath,
   resolveKiroCliPath,
+  resolveGeminiCliPath,
   resolveCopilotGithubToken,
   resolveKiroApiKey,
   resolveOpencodeApiKey,
   resolveCursorApiKey,
+  resolveGeminiApiKey,
 } from './globalConfigResolvers.js';
