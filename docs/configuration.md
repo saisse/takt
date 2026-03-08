@@ -13,7 +13,7 @@ Configure TAKT defaults in `~/.takt/config.yaml`. This file is created automatic
 language: en                  # UI language: 'en' or 'ja'
 logging:
   level: info                 # Log level: debug, info, warn, error
-provider: claude              # Default provider: claude, codex, opencode, cursor, or copilot
+provider: claude              # Default provider: claude, codex, opencode, cursor, copilot, or gemini
 model: sonnet                 # Default model (optional, passed to provider as-is)
 branch_name_strategy: romaji  # Branch name generation: 'romaji' (fast) or 'ai' (slow)
 prevent_sleep: false          # Prevent macOS idle sleep during execution (caffeinate)
@@ -56,20 +56,22 @@ interactive_preview_steps: 3      # Step previews in interactive mode (0-10, def
 #     default_permission_mode: edit
 
 # API Key configuration (optional)
-# Can be overridden by environment variables TAKT_ANTHROPIC_API_KEY / TAKT_OPENAI_API_KEY / TAKT_OPENCODE_API_KEY / TAKT_CURSOR_API_KEY / TAKT_COPILOT_GITHUB_TOKEN
+# Can be overridden by environment variables TAKT_ANTHROPIC_API_KEY / TAKT_OPENAI_API_KEY / TAKT_OPENCODE_API_KEY / TAKT_CURSOR_API_KEY / TAKT_COPILOT_GITHUB_TOKEN / TAKT_GEMINI_API_KEY
 # anthropic_api_key: sk-ant-...  # For Claude (Anthropic)
 # openai_api_key: sk-...         # For Codex (OpenAI)
 # opencode_api_key: ...          # For OpenCode
 # cursor_api_key: ...            # For Cursor Agent (optional; login session fallback is also supported)
 # copilot_github_token: ...      # For Copilot (GitHub token)
+# gemini_api_key: ...            # For Gemini CLI
 
 # CLI path overrides (optional)
 # Override provider CLI binaries (must be absolute paths to executable files)
-# Can be overridden by environment variables TAKT_CLAUDE_CLI_PATH / TAKT_CODEX_CLI_PATH / TAKT_CURSOR_CLI_PATH / TAKT_COPILOT_CLI_PATH
+# Can be overridden by environment variables TAKT_CLAUDE_CLI_PATH / TAKT_CODEX_CLI_PATH / TAKT_CURSOR_CLI_PATH / TAKT_COPILOT_CLI_PATH / TAKT_GEMINI_CLI_PATH
 # claude_cli_path: /usr/local/bin/claude
 # codex_cli_path: /usr/local/bin/codex
 # cursor_cli_path: /usr/local/bin/cursor-agent
 # copilot_cli_path: /usr/local/bin/github-copilot-cli
+# gemini_cli_path: /usr/local/bin/gemini
 
 # VCS provider (optional)
 # Auto-detected from git remote URL (github.com → github, gitlab.com → gitlab)
@@ -119,7 +121,7 @@ interactive_preview_steps: 3      # Step previews in interactive mode (0-10, def
 |-------|------|---------|-------------|
 | `language` | `"en"` \| `"ja"` | `"en"` | UI language |
 | `logging.level` | `"debug"` \| `"info"` \| `"warn"` \| `"error"` | `"info"` | Log level |
-| `provider` | `"claude"` \| `"codex"` \| `"opencode"` \| `"cursor"` \| `"copilot"` | `"claude"` | Default AI provider |
+| `provider` | `"claude"` \| `"codex"` \| `"opencode"` \| `"cursor"` \| `"copilot"` \| `"gemini"` | `"claude"` | Default AI provider |
 | `model` | string | - | Default model name (passed to provider as-is) |
 | `branch_name_strategy` | `"romaji"` \| `"ai"` | `"romaji"` | Branch name generation strategy |
 | `prevent_sleep` | boolean | `false` | Prevent macOS idle sleep (caffeinate) |
@@ -142,9 +144,11 @@ interactive_preview_steps: 3      # Step previews in interactive mode (0-10, def
 | `opencode_api_key` | string | - | OpenCode API key |
 | `cursor_api_key` | string | - | Cursor API key (optional; login session fallback supported) |
 | `copilot_github_token` | string | - | GitHub token for Copilot CLI authentication |
+| `gemini_api_key` | string | - | Gemini API key |
 | `codex_cli_path` | string | - | Codex CLI binary path override (absolute) |
 | `cursor_cli_path` | string | - | Cursor Agent CLI binary path override (absolute) |
 | `copilot_cli_path` | string | - | Copilot CLI binary path override (absolute) |
+| `gemini_cli_path` | string | - | Gemini CLI binary path override (absolute) |
 | `enable_builtin_pieces` | boolean | `true` | Enable builtin workflows (config key name unchanged) |
 | `disabled_builtins` | string[] | `[]` | Builtin workflows to disable, by workflow `name` |
 | `pipeline` | object | - | Pipeline template settings |
@@ -190,7 +194,7 @@ concurrency: 2                # Parallel task count for takt run in this project
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `provider` | `"claude"` \| `"codex"` \| `"opencode"` \| `"cursor"` \| `"copilot"` \| `"mock"` | - | Override provider |
+| `provider` | `"claude"` \| `"codex"` \| `"opencode"` \| `"cursor"` \| `"copilot"` \| `"gemini"` \| `"mock"` | - | Override provider |
 | `model` | string | - | Override model name (passed to provider as-is) |
 | `allow_git_hooks` | boolean | `false` | Allow git hooks during TAKT-managed auto-commit |
 | `allow_git_filters` | boolean | `false` | Allow git filters during TAKT-managed auto-commit |
@@ -210,7 +214,7 @@ Project config values override global config when both are set.
 
 ## API Key Configuration
 
-TAKT supports five providers. Claude/Codex/OpenCode use API keys, Cursor can use either API key or existing `cursor-agent login` session, and Copilot uses a GitHub token.
+TAKT supports six providers. Claude/Codex/OpenCode use API keys, Cursor can use either API key or existing `cursor-agent login` session, Gemini uses an API key, and Copilot uses a GitHub token.
 
 ### Environment Variables (Recommended)
 
@@ -229,6 +233,9 @@ export TAKT_CURSOR_API_KEY=...
 
 # For GitHub Copilot CLI
 export TAKT_COPILOT_GITHUB_TOKEN=ghp_...
+
+# For Gemini CLI
+export TAKT_GEMINI_API_KEY=...
 ```
 
 ### Config File
@@ -240,6 +247,7 @@ openai_api_key: sk-...         # For Codex
 opencode_api_key: ...          # For OpenCode
 cursor_api_key: ...            # For Cursor Agent (optional)
 copilot_github_token: ghp_...  # For GitHub Copilot CLI
+gemini_api_key: ...            # For Gemini CLI
 ```
 
 ### Priority
@@ -253,6 +261,7 @@ Environment variables take precedence over `config.yaml` settings.
 | OpenCode | `TAKT_OPENCODE_API_KEY` | `opencode_api_key` |
 | Cursor Agent | `TAKT_CURSOR_API_KEY` | `cursor_api_key` |
 | GitHub Copilot CLI | `TAKT_COPILOT_GITHUB_TOKEN` | `copilot_github_token` |
+| Gemini CLI | `TAKT_GEMINI_API_KEY` | `gemini_api_key` |
 
 ### Security
 
@@ -262,6 +271,7 @@ Environment variables take precedence over `config.yaml` settings.
 - Cursor provider can run without API key when `cursor-agent login` is already configured.
 - If you set an API key, installing the corresponding CLI tool (Claude Code, Codex, OpenCode) is not necessary. TAKT directly calls the respective API.
 - Copilot provider requires the `copilot` CLI to be installed. The GitHub token is used for authentication.
+- Gemini provider requires the `gemini` CLI to be installed. The API key can also be passed via `TAKT_GEMINI_API_KEY` or `gemini_api_key`.
 
 ### CLI Path Overrides
 
@@ -272,6 +282,7 @@ export TAKT_CLAUDE_CLI_PATH=/usr/local/bin/claude
 export TAKT_CODEX_CLI_PATH=/usr/local/bin/codex
 export TAKT_CURSOR_CLI_PATH=/usr/local/bin/cursor-agent
 export TAKT_COPILOT_CLI_PATH=/usr/local/bin/github-copilot-cli
+export TAKT_GEMINI_CLI_PATH=/usr/local/bin/gemini
 ```
 
 ```yaml
@@ -280,6 +291,7 @@ claude_cli_path: /usr/local/bin/claude
 codex_cli_path: /usr/local/bin/codex
 cursor_cli_path: /usr/local/bin/cursor-agent
 copilot_cli_path: /usr/local/bin/github-copilot-cli
+gemini_cli_path: /usr/local/bin/gemini
 ```
 
 | Provider | Environment Variable | Config Key |
@@ -288,6 +300,7 @@ copilot_cli_path: /usr/local/bin/github-copilot-cli
 | Codex | `TAKT_CODEX_CLI_PATH` | `codex_cli_path` |
 | Cursor Agent | `TAKT_CURSOR_CLI_PATH` | `cursor_cli_path` |
 | Copilot | `TAKT_COPILOT_CLI_PATH` | `copilot_cli_path` |
+| Gemini | `TAKT_GEMINI_CLI_PATH` | `gemini_cli_path` |
 
 Paths must be absolute paths to executable files. Environment variables take precedence over config file values. These can also be set at the project level in `.takt/config.yaml`.
 
@@ -297,7 +310,7 @@ The model used for each step is resolved with the following priority order (high
 
 1. **Workflow step `model`** - Specified in the step definition in workflow YAML
 2. **Global config `model`** - Default model in `~/.takt/config.yaml`
-3. **Provider default** - Falls back to the provider's built-in default (Claude: `sonnet`, Codex: `codex`, OpenCode: provider default, Cursor: CLI default, Copilot: CLI default)
+3. **Provider default** - Falls back to the provider's built-in default (Claude: `sonnet`, Codex: `codex`, OpenCode: provider default, Cursor: CLI default, Gemini: CLI default, Copilot: CLI default)
 
 ### Provider-specific Model Notes
 
@@ -310,6 +323,8 @@ The model used for each step is resolved with the following priority order (high
 **Cursor Agent** forwards `model` directly to `cursor-agent --model <model>`. If omitted, Cursor CLI default is used.
 
 **GitHub Copilot CLI** forwards `model` directly to `copilot --model <model>`. If omitted, Copilot CLI default is used.
+
+**Gemini CLI** forwards `model` directly to `gemini -m <model>`. If omitted, Gemini CLI default is used.
 
 ### Example
 
@@ -338,11 +353,11 @@ Provider profiles allow you to set default permission modes and per-step permiss
 
 TAKT uses three provider-independent permission modes:
 
-| Mode | Description | Claude | Codex | OpenCode | Cursor Agent | Copilot |
-|------|-------------|--------|-------|----------|--------------|---------|
-| `readonly` | Read-only access, no file modifications | `default` | `read-only` | `read-only` | default flags (no `--force`) | no permission flags |
-| `edit` | Allow file edits with confirmation | `acceptEdits` | `workspace-write` | `workspace-write` | default flags (no `--force`) | `--allow-all-tools --no-ask-user` |
-| `full` | Bypass all permission checks | `bypassPermissions` | `danger-full-access` | `danger-full-access` | `--force` | `--yolo` |
+| Mode | Description | Claude | Codex | OpenCode | Cursor Agent | Copilot | Gemini CLI |
+|------|-------------|--------|-------|----------|--------------|---------|------------|
+| `readonly` | Read-only access, no file modifications | `default` | `read-only` | `read-only` | default flags (no `--force`) | no permission flags | `--approval-mode plan` |
+| `edit` | Allow file edits with confirmation | `acceptEdits` | `workspace-write` | `workspace-write` | default flags (no `--force`) | `--allow-all-tools --no-ask-user` | `--approval-mode auto_edit` |
+| `full` | Bypass all permission checks | `bypassPermissions` | `danger-full-access` | `danger-full-access` | `--force` | `--yolo` | `--approval-mode yolo` |
 
 ### Configuration
 

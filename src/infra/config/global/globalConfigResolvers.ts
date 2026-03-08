@@ -86,10 +86,34 @@ export function resolveCopilotCliPath(): string | undefined {
   return validateCliPath(config.copilotCliPath, 'copilot_cli_path');
 }
 
+export function resolveGeminiCliPath(): string | undefined {
+  const envPath = process.env[envVarNameFromPath('gemini_cli_path')];
+  if (envPath !== undefined) {
+    return validateCliPath(envPath, 'TAKT_GEMINI_CLI_PATH');
+  }
+
+  const config: GlobalConfig = loadGlobalConfig();
+  if (config.geminiCliPath === undefined) {
+    return undefined;
+  }
+  return validateCliPath(config.geminiCliPath, 'gemini_cli_path');
+}
+
 export function resolveCopilotGithubToken(): string | undefined {
   const envKey = process.env[envVarNameFromPath('copilot_github_token')];
   if (envKey) return envKey;
 
   const config = loadGlobalConfig();
   return config.copilotGithubToken;
+}
+
+export function resolveGeminiApiKey(): string | undefined {
+  const envKey = process.env[envVarNameFromPath('gemini_api_key')];
+  if (envKey) return envKey;
+
+  const googleEnvKey = process.env[envVarNameFromPath('google_api_key')];
+  if (googleEnvKey) return googleEnvKey;
+
+  const config = loadGlobalConfig();
+  return config.geminiApiKey ?? config.googleApiKey;
 }

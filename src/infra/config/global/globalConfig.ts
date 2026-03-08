@@ -25,7 +25,9 @@ export {
   resolveClaudeCliPath,
   resolveCursorCliPath,
   resolveCopilotCliPath,
+  resolveGeminiCliPath,
   resolveCopilotGithubToken,
   resolveOpencodeApiKey,
   resolveCursorApiKey,
+  resolveGeminiApiKey,
 } from './globalConfigResolvers.js';

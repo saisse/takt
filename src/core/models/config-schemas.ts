@@ -153,6 +153,7 @@ const GlobalOnlyConfigSchema = z.object({
   claude_cli_path: z.string().optional(),
   cursor_cli_path: z.string().optional(),
   copilot_cli_path: z.string().optional(),
+  gemini_cli_path: z.string().optional(),
   copilot_github_token: z.string().optional(),
   opencode_api_key: z.string().optional(),
   cursor_api_key: z.string().optional(),

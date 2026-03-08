@@ -8,7 +8,7 @@
  * core/piece/types.ts re-exports these for backward compatibility.
  */
 
-export type ProviderType = 'claude' | 'codex' | 'opencode' | 'cursor' | 'copilot' | 'mock';
+export type ProviderType = 'claude' | 'codex' | 'opencode' | 'cursor' | 'copilot' | 'gemini' | 'mock';
 
 export interface StreamInitEventData {
   model: string;

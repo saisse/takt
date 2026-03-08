@@ -67,9 +67,6 @@ export function serializeGlobalConfig(config: GlobalConfig): Record<string, unkn
   if (config.openaiApiKey) {
     raw.openai_api_key = config.openaiApiKey;
   }
-  if (config.geminiApiKey) {
-    raw.gemini_api_key = config.geminiApiKey;
-  }
   if (config.googleApiKey) {
     raw.google_api_key = config.googleApiKey;
   }
@@ -88,6 +85,9 @@ export function serializeGlobalConfig(config: GlobalConfig): Record<string, unkn
   if (config.cursorCliPath) {
     raw.cursor_cli_path = config.cursorCliPath;
   }
+  if (config.geminiCliPath) {
+    raw.gemini_cli_path = config.geminiCliPath;
+  }
   if (config.copilotCliPath) {
     raw.copilot_cli_path = config.copilotCliPath;
   }
@@ -99,6 +99,9 @@ export function serializeGlobalConfig(config: GlobalConfig): Record<string, unkn
   }
   if (config.cursorApiKey) {
     raw.cursor_api_key = config.cursorApiKey;
+  }
+  if (config.geminiApiKey) {
+    raw.gemini_api_key = config.geminiApiKey;
   }
   if (config.bookmarksFile) {
     raw.bookmarks_file = config.bookmarksFile;

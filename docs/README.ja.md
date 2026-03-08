@@ -22,7 +22,7 @@ TAKT は TAKT 自身で開発しています（ドッグフーディング）。
 
 次のいずれかが必要です。
 
-- **プロバイダー CLI**: [Codex](https://github.com/openai/codex)、[OpenCode](https://opencode.ai)、[Cursor Agent](https://docs.cursor.com/)、[GitHub Copilot CLI](https://docs.github.com/en/copilot/github-copilot-in-the-cli) のいずれか
+- **プロバイダー CLI**: [Codex](https://github.com/openai/codex)、[OpenCode](https://opencode.ai)、[Cursor Agent](https://docs.cursor.com/)、[GitHub Copilot CLI](https://docs.github.com/en/copilot/github-copilot-in-the-cli)、[Gemini CLI](https://github.com/google-gemini/gemini-cli) のいずれか
 - **API Key 直接利用**: Anthropic / OpenAI / OpenCode の API Key があれば CLI は不要です
 
 任意:
@@ -165,7 +165,7 @@ workflow ファイルの正式ディレクトリ名は `workflows/` です。旧
 最小限の `~/.takt/config.yaml` は次の通りです。
 
 ```yaml
-provider: claude    # claude, codex, opencode, cursor, or copilot
+provider: claude    # claude, codex, opencode, cursor, copilot, or gemini
 model: sonnet       # プロバイダーにそのまま渡されます
 language: ja        # en or ja
 ```

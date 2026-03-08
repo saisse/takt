@@ -111,6 +111,7 @@ language: en        # UI language: en | ja
 # claude_cli_path: "/absolute/path/to/claude"  # Absolute path to Claude Code CLI
 # cursor_cli_path: "/absolute/path/to/cursor"  # Absolute path to cursor-agent CLI
 # copilot_cli_path: "/absolute/path/to/copilot" # Absolute path to Copilot CLI
+# gemini_cli_path: "/absolute/path/to/gemini"  # Absolute path to Gemini CLI
 # copilot_github_token: "ghp_..."              # Copilot GitHub token
 
 # Misc
