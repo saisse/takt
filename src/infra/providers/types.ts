@@ -36,6 +36,7 @@ export interface ProviderCallOptions {
   openaiApiKey?: string;
   opencodeApiKey?: string;
   cursorApiKey?: string;
+  geminiApiKey?: string;
   copilotGithubToken?: string;
   outputSchema?: Record<string, unknown>;
 }
@@ -51,4 +52,4 @@ export interface Provider {
 }
 
 /** Provider type */
-export type ProviderType = 'claude' | 'codex' | 'opencode' | 'cursor' | 'copilot' | 'mock';
+export type ProviderType = 'claude' | 'codex' | 'opencode' | 'cursor' | 'copilot' | 'gemini' | 'mock';

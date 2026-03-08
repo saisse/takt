@@ -111,6 +111,7 @@ export class GlobalConfigManager {
       codexCliPath: parsed.codex_cli_path,
       claudeCliPath: parsed.claude_cli_path,
       cursorCliPath: parsed.cursor_cli_path,
+      geminiCliPath: parsed.gemini_cli_path,
       copilotCliPath: parsed.copilot_cli_path,
       copilotGithubToken: parsed.copilot_github_token,
       opencodeApiKey: parsed.opencode_api_key,

@@ -8,4 +8,11 @@ describe('CLI --provider option', () => {
     expect(providerOption).toBeDefined();
     expect(providerOption?.description).toContain('cursor');
   });
+
+  it('should include gemini in provider help text', () => {
+    const providerOption = program.options.find((option) => option.long === '--provider');
+
+    expect(providerOption).toBeDefined();
+    expect(providerOption?.description).toContain('gemini');
+  });
 });

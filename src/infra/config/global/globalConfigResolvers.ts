@@ -73,6 +73,27 @@ export function resolveCursorApiKey(): string | undefined {
   return config.cursorApiKey;
 }
 
+export function resolveGeminiApiKey(): string | undefined {
+  const envKey = process.env[envVarNameFromPath('gemini_api_key')];
+  if (envKey) return envKey;
+
+  const config = loadGlobalConfig();
+  return config.geminiApiKey;
+}
+
+export function resolveGeminiCliPath(): string | undefined {
+  const envPath = process.env[envVarNameFromPath('gemini_cli_path')];
+  if (envPath !== undefined) {
+    return validateCliPath(envPath, 'TAKT_GEMINI_CLI_PATH');
+  }
+
+  const config: GlobalConfig = loadGlobalConfig();
+  if (config.geminiCliPath === undefined) {
+    return undefined;
+  }
+  return validateCliPath(config.geminiCliPath, 'gemini_cli_path');
+}
+
 export function resolveCopilotCliPath(): string | undefined {
   const envPath = process.env[envVarNameFromPath('copilot_cli_path')];
   if (envPath !== undefined) {

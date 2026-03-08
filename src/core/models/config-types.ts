@@ -11,7 +11,7 @@ import type { MovementProviderOptions, PieceRuntimeConfig } from './piece-types.
 import type { ProviderPermissionProfiles } from './provider-profiles.js';
 
 export interface PersonaProviderEntry {
-  provider?: 'claude' | 'codex' | 'opencode' | 'cursor' | 'copilot' | 'mock';
+  provider?: 'claude' | 'codex' | 'opencode' | 'cursor' | 'copilot' | 'gemini' | 'mock';
   model?: string;
 }
 
@@ -101,7 +101,7 @@ export interface NotificationSoundEventsConfig {
  */
 export interface ProjectConfig {
   /** Provider selection for agent runtime */
-  provider?: 'claude' | 'codex' | 'opencode' | 'cursor' | 'copilot' | 'mock';
+  provider?: 'claude' | 'codex' | 'opencode' | 'cursor' | 'copilot' | 'gemini' | 'mock';
   /** Model selection for agent runtime */
   model?: string;
   /** Auto-create PR after worktree execution */
@@ -188,6 +188,9 @@ export interface GlobalConfig extends Omit<ProjectConfig, 'submodules' | 'withSu
   /** @globalOnly */
   /** External cursor-agent CLI path (overridden by TAKT_CURSOR_CLI_PATH env var) */
   cursorCliPath?: string;
+  /** @globalOnly */
+  /** External Gemini CLI path (overridden by TAKT_GEMINI_CLI_PATH env var) */
+  geminiCliPath?: string;
   /** @globalOnly */
   /** External Copilot CLI path (overridden by TAKT_COPILOT_CLI_PATH env var) */
   copilotCliPath?: string;

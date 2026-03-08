@@ -125,6 +125,7 @@ const GLOBAL_ENV_SPECS: readonly EnvSpec[] = [
   { path: 'codex_cli_path', type: 'string' },
   { path: 'claude_cli_path', type: 'string' },
   { path: 'cursor_cli_path', type: 'string' },
+  { path: 'gemini_cli_path', type: 'string' },
   { path: 'copilot_cli_path', type: 'string' },
   { path: 'copilot_github_token', type: 'string' },
   { path: 'opencode_api_key', type: 'string' },

@@ -70,7 +70,7 @@ export const MovementProviderOptionsSchema = z.object({
 }).optional();
 
 /** Provider key schema for profile maps */
-export const ProviderProfileNameSchema = z.enum(['claude', 'codex', 'opencode', 'cursor', 'copilot', 'mock']);
+export const ProviderProfileNameSchema = z.enum(['claude', 'codex', 'opencode', 'cursor', 'copilot', 'gemini', 'mock']);
 export const ProviderTypeSchema = ProviderProfileNameSchema;
 
 export const ProviderBlockSchema = z.object({
@@ -126,6 +126,7 @@ export const ProviderPermissionProfilesSchema = z.object({
   codex: ProviderPermissionProfileSchema.optional(),
   opencode: ProviderPermissionProfileSchema.optional(),
   cursor: ProviderPermissionProfileSchema.optional(),
+  gemini: ProviderPermissionProfileSchema.optional(),
   mock: ProviderPermissionProfileSchema.optional(),
 }).optional();
 
@@ -560,6 +561,8 @@ const GlobalOnlyConfigSchema = z.object({
   claude_cli_path: z.string().optional(),
   /** External cursor-agent CLI path (overridden by TAKT_CURSOR_CLI_PATH env var) */
   cursor_cli_path: z.string().optional(),
+  /** External Gemini CLI path (overridden by TAKT_GEMINI_CLI_PATH env var) */
+  gemini_cli_path: z.string().optional(),
   /** External Copilot CLI path (overridden by TAKT_COPILOT_CLI_PATH env var) */
   copilot_cli_path: z.string().optional(),
   /** Copilot GitHub token (overridden by TAKT_COPILOT_GITHUB_TOKEN env var) */
