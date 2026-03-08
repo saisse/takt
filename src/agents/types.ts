@@ -19,9 +19,9 @@ export interface RunAgentOptions {
   abortSignal?: AbortSignal;
   sessionId?: string;
   model?: string;
-  provider?: 'claude' | 'codex' | 'opencode' | 'cursor' | 'copilot' | 'mock';
+  provider?: 'claude' | 'codex' | 'opencode' | 'cursor' | 'copilot' | 'gemini' | 'mock';
   stepModel?: string;
-  stepProvider?: 'claude' | 'codex' | 'opencode' | 'cursor' | 'copilot' | 'mock';
+  stepProvider?: 'claude' | 'codex' | 'opencode' | 'cursor' | 'copilot' | 'gemini' | 'mock';
   personaPath?: string;
   allowedTools?: string[];
   mcpServers?: Record<string, McpServerConfig>;

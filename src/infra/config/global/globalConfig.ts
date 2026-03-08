@@ -28,4 +28,6 @@ export {
   resolveCopilotGithubToken,
   resolveOpencodeApiKey,
   resolveCursorApiKey,
+  resolveGeminiApiKey,
+  resolveGeminiCliPath,
 } from './globalConfigResolvers.js';

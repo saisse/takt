@@ -15,6 +15,7 @@ export const DEFAULT_PROVIDER_PERMISSION_PROFILES: ProviderPermissionProfiles = 
   opencode: { defaultPermissionMode: 'edit' },
   cursor: { defaultPermissionMode: 'edit' },
   copilot: { defaultPermissionMode: 'edit' },
+  gemini: { defaultPermissionMode: 'edit' },
   mock: { defaultPermissionMode: 'edit' },
 };
 

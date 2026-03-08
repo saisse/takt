@@ -88,6 +88,9 @@ export function serializeGlobalConfig(config: GlobalConfig): Record<string, unkn
   if (config.cursorCliPath) {
     raw.cursor_cli_path = config.cursorCliPath;
   }
+  if (config.geminiCliPath) {
+    raw.gemini_cli_path = config.geminiCliPath;
+  }
   if (config.copilotCliPath) {
     raw.copilot_cli_path = config.copilotCliPath;
   }

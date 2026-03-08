@@ -23,7 +23,7 @@ export function setLanguage(language: Language): void {
   saveGlobalConfig(config);
 }
 
-export function setProvider(provider: 'claude' | 'codex' | 'opencode' | 'cursor' | 'copilot'): void {
+export function setProvider(provider: 'claude' | 'codex' | 'opencode' | 'cursor' | 'copilot' | 'gemini'): void {
   const config = loadGlobalConfig();
   config.provider = provider;
   saveGlobalConfig(config);

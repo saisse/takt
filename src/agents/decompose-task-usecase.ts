@@ -10,7 +10,7 @@ export interface DecomposeTaskOptions {
   personaPath?: string;
   language?: Language;
   model?: string;
-  provider?: 'claude' | 'codex' | 'opencode' | 'cursor' | 'copilot' | 'mock';
+  provider?: 'claude' | 'codex' | 'opencode' | 'cursor' | 'copilot' | 'gemini' | 'mock';
   onStream?: StreamCallback;
   onPromptResolved?: (promptParts: {
     systemPrompt: string;

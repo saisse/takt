@@ -20,6 +20,8 @@ export {
   resolveCopilotGithubToken,
   resolveOpencodeApiKey,
   resolveCursorApiKey,
+  resolveGeminiApiKey,
+  resolveGeminiCliPath,
   validateCliPath,
 } from './globalConfig.js';
 
