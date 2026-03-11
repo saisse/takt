@@ -12,6 +12,10 @@ jobs:
       contents: read
       pull-requests: write
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: API キー確認
         run: |
           if [ -z "$ANTHROPIC_API_KEY" ]; then
