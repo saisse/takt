@@ -124,6 +124,13 @@ export function serializeGlobalConfig(config: GlobalConfig): Record<string, unkn
       custom_scripts: config.pieceRuntimePrepare.customScripts,
     };
   }
+  if (config.pieceArpeggio) {
+    raw.piece_arpeggio = {
+      custom_data_source_modules: config.pieceArpeggio.customDataSourceModules,
+      custom_merge_inline_js: config.pieceArpeggio.customMergeInlineJs,
+      custom_merge_files: config.pieceArpeggio.customMergeFiles,
+    };
+  }
   if (config.preventSleep !== undefined) {
     raw.prevent_sleep = config.preventSleep;
   }

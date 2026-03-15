@@ -129,6 +129,11 @@ export class GlobalConfigManager {
       pieceRuntimePrepare: parsed.piece_runtime_prepare ? {
         customScripts: parsed.piece_runtime_prepare.custom_scripts,
       } : undefined,
+      pieceArpeggio: parsed.piece_arpeggio ? {
+        customDataSourceModules: parsed.piece_arpeggio.custom_data_source_modules,
+        customMergeInlineJs: parsed.piece_arpeggio.custom_merge_inline_js,
+        customMergeFiles: parsed.piece_arpeggio.custom_merge_files,
+      } : undefined,
       preventSleep: parsed.prevent_sleep,
       notificationSound: parsed.notification_sound,
       notificationSoundEvents: parsed.notification_sound_events ? {

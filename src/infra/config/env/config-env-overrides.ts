@@ -141,6 +141,10 @@ const GLOBAL_ENV_SPECS: readonly EnvSpec[] = [
   { path: 'runtime.prepare', type: 'json' },
   { path: 'piece_runtime_prepare', type: 'json' },
   { path: 'piece_runtime_prepare.custom_scripts', type: 'boolean' },
+  { path: 'piece_arpeggio', type: 'json' },
+  { path: 'piece_arpeggio.custom_data_source_modules', type: 'boolean' },
+  { path: 'piece_arpeggio.custom_merge_inline_js', type: 'boolean' },
+  { path: 'piece_arpeggio.custom_merge_files', type: 'boolean' },
   { path: 'prevent_sleep', type: 'boolean' },
   { path: 'notification_sound', type: 'boolean' },
   { path: 'notification_sound_events', type: 'json' },
@@ -179,6 +183,10 @@ const PROJECT_ENV_SPECS: readonly EnvSpec[] = [
   { path: 'base_branch', type: 'string' },
   { path: 'piece_runtime_prepare', type: 'json' },
   { path: 'piece_runtime_prepare.custom_scripts', type: 'boolean' },
+  { path: 'piece_arpeggio', type: 'json' },
+  { path: 'piece_arpeggio.custom_data_source_modules', type: 'boolean' },
+  { path: 'piece_arpeggio.custom_merge_inline_js', type: 'boolean' },
+  { path: 'piece_arpeggio.custom_merge_files', type: 'boolean' },
 ];
 
 export function applyGlobalConfigEnvOverrides(target: Record<string, unknown>): void {

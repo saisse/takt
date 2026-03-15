@@ -289,6 +289,7 @@ describe('normalizeArpeggio: strategy coercion via loadPieceByIdentifier', () =>
 
   beforeEach(() => {
     tempDir = mkdtempSync(join(tmpdir(), 'takt-arpeggio-coerce-'));
+    mkdirSync(join(tempDir, '.takt'), { recursive: true });
     // Dummy files required by normalizeArpeggio (resolved relative to piece dir)
     writeFileSync(join(tempDir, 'template.md'), '{line:1}');
     writeFileSync(join(tempDir, 'data.csv'), 'col\nval');
@@ -299,6 +300,12 @@ describe('normalizeArpeggio: strategy coercion via loadPieceByIdentifier', () =>
   });
 
   it('should preserve strategy:"custom" when loading arpeggio piece YAML', () => {
+    writeFileSync(
+      join(tempDir, '.takt', 'config.yaml'),
+      ['piece_arpeggio:', '  custom_merge_inline_js: true'].join('\n'),
+      'utf-8',
+    );
+
     const pieceYaml = `name: arpeggio-coerce-test
 initial_movement: process
 max_movements: 5

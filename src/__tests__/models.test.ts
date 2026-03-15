@@ -746,6 +746,7 @@ describe('ProjectConfigSchema', () => {
     expect(provider?.network_access).toBe(false);
   });
 
+
   it('should parse piece_runtime_prepare policy block', () => {
     const result = ProjectConfigSchema.parse({
       piece_runtime_prepare: {
@@ -755,6 +756,22 @@ describe('ProjectConfigSchema', () => {
 
     expect(result.piece_runtime_prepare).toEqual({
       custom_scripts: true,
+    });
+  });
+
+  it('should parse piece_arpeggio policy block', () => {
+    const result = ProjectConfigSchema.parse({
+      piece_arpeggio: {
+        custom_data_source_modules: true,
+        custom_merge_inline_js: false,
+        custom_merge_files: true,
+      },
+    } as unknown) as Record<string, unknown>;
+
+    expect(result.piece_arpeggio).toEqual({
+      custom_data_source_modules: true,
+      custom_merge_inline_js: false,
+      custom_merge_files: true,
     });
   });
 

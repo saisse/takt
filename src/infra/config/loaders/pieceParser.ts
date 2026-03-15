@@ -28,7 +28,7 @@ type RawStep = z.output<typeof PieceMovementRawSchema>;
 import type { MovementProviderOptions } from '../../../core/models/piece-types.js';
 import { isRuntimePreparePreset } from '../../../core/models/piece-types.js';
 import { normalizeRuntime } from '../configNormalizers.js';
-import type { PieceOverrides, PieceRuntimePrepareConfig } from '../../../core/models/config-types.js';
+import type { PieceArpeggioConfig, PieceOverrides, PieceRuntimePrepareConfig } from '../../../core/models/config-types.js';
 import { applyQualityGateOverrides } from './qualityGateOverrides.js';
 import { loadProjectConfig } from '../project/projectConfig.js';
 import { loadGlobalConfig } from '../global/globalConfig.js';
@@ -242,6 +242,7 @@ function normalizeStepFromRaw(
   context?: FacetResolutionContext,
   projectOverrides?: PieceOverrides,
   globalOverrides?: PieceOverrides,
+  pieceArpeggioPolicy?: PieceArpeggioConfig,
 ): PieceMovement {
   const rules: PieceRule[] | undefined = step.rules?.map(normalizeRule);
 
@@ -279,6 +280,7 @@ function normalizeStepFromRaw(
   const expandedLegacyInstruction = step.instruction_template
     ? resolveRefToContent(step.instruction_template, sections.resolvedInstructions, pieceDir, 'instructions', context)
     : undefined;
+  validatePieceArpeggio(step.name, step.arpeggio, pieceArpeggioPolicy);
 
   const result: PieceMovement = {
     name: step.name,
@@ -321,6 +323,7 @@ function normalizeStepFromRaw(
         context,
         projectOverrides,
         globalOverrides,
+        pieceArpeggioPolicy,
       ),
     );
   }
@@ -388,6 +391,7 @@ export function normalizePieceConfig(
   projectOverrides?: PieceOverrides,
   globalOverrides?: PieceOverrides,
   pieceRuntimePreparePolicy?: PieceRuntimePrepareConfig,
+  pieceArpeggioPolicy?: PieceArpeggioConfig,
 ): PieceConfig {
   const parsed = PieceConfigRawSchema.parse(raw);
 
@@ -416,7 +420,18 @@ export function normalizePieceConfig(
   validatePieceRuntimePrepare(pieceRuntime, pieceRuntimePreparePolicy);
 
   const movements: PieceMovement[] = parsed.movements.map((step) =>
-    normalizeStepFromRaw(step, pieceDir, sections, pieceProvider, pieceModel, pieceProviderOptions, context, projectOverrides, globalOverrides),
+    normalizeStepFromRaw(
+      step,
+      pieceDir,
+      sections,
+      pieceProvider,
+      pieceModel,
+      pieceProviderOptions,
+      context,
+      projectOverrides,
+      globalOverrides,
+      pieceArpeggioPolicy,
+    ),
   );
 
   // Schema guarantees movements.min(1)
@@ -469,6 +484,10 @@ export function loadPieceFromFile(filePath: string, projectDir: string): PieceCo
     globalConfig.pieceRuntimePrepare,
     projectConfig.pieceRuntimePrepare,
   );
+  const pieceArpeggioPolicy = {
+    ...globalConfig.pieceArpeggio,
+    ...projectConfig.pieceArpeggio,
+  };
 
   return normalizePieceConfig(
     raw,
@@ -477,6 +496,7 @@ export function loadPieceFromFile(filePath: string, projectDir: string): PieceCo
     projectOverrides,
     globalOverrides,
     pieceRuntimePreparePolicy,
+    pieceArpeggioPolicy,
   );
 }
 
@@ -509,6 +529,35 @@ function validatePieceRuntimePrepare(
     throw new Error(
       `Piece runtime.prepare custom script "${entry}" is disabled by default. `
       + 'Configure piece_runtime_prepare.custom_scripts in project/global config to allow it.'
+    );
+  }
+}
+
+function validatePieceArpeggio(
+  movementName: string,
+  raw: RawStep['arpeggio'],
+  policy?: PieceArpeggioConfig,
+): void {
+  if (!raw) return;
+
+  if (raw.source !== 'csv' && policy?.customDataSourceModules !== true) {
+    throw new Error(
+      `Movement "${movementName}" uses Arpeggio source "${raw.source}", which is disabled by default for pieces. `
+      + 'Configure piece_arpeggio.custom_data_source_modules in project/global config to allow it.'
+    );
+  }
+
+  if (raw.merge?.inline_js && policy?.customMergeInlineJs !== true) {
+    throw new Error(
+      `Movement "${movementName}" uses Arpeggio inline_js, which is disabled by default for pieces. `
+      + 'Configure piece_arpeggio.custom_merge_inline_js in project/global config to allow it.'
+    );
+  }
+
+  if (raw.merge?.file && policy?.customMergeFiles !== true) {
+    throw new Error(
+      `Movement "${movementName}" uses Arpeggio merge.file, which is disabled by default for pieces. `
+      + 'Configure piece_arpeggio.custom_merge_files in project/global config to allow it.'
     );
   }
 }

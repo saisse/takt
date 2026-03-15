@@ -105,6 +105,16 @@ export interface PieceRuntimePrepareConfig {
   customScripts?: boolean;
 }
 
+/** Piece-level Arpeggio custom capability policy */
+export interface PieceArpeggioConfig {
+  /** Allow non-builtin Arpeggio data sources from piece YAML (default: false) */
+  customDataSourceModules?: boolean;
+  /** Allow inline JS custom merge functions from piece YAML (default: false) */
+  customMergeInlineJs?: boolean;
+  /** Allow external JS custom merge files from piece YAML (default: false) */
+  customMergeFiles?: boolean;
+}
+
 /** Notification sound toggles per event timing */
 export interface NotificationSoundEventsConfig {
   /** Warning when iteration limit is reached */
@@ -171,6 +181,8 @@ export interface ProjectConfig {
   runtime?: PieceRuntimeConfig;
   /** Piece-level runtime.prepare policy */
   pieceRuntimePrepare?: PieceRuntimePrepareConfig;
+  /** Piece-level Arpeggio policy */
+  pieceArpeggio?: PieceArpeggioConfig;
 }
 
 /**

@@ -711,6 +711,7 @@ description: Missing movements
   });
 });
 
+
 describe('Piece Loader IT: piece runtime.prepare policy', () => {
   let testDir: string;
   const loadGlobalConfigMock = vi.mocked(loadGlobalConfig);
@@ -879,5 +880,76 @@ movements:
 
     expect(config).not.toBeNull();
     expect(config!.runtime).toEqual({ prepare: ['./setup.sh'] });
+  });
+});
+
+describe('Piece Loader IT: piece Arpeggio policy', () => {
+  let testDir: string;
+
+  beforeEach(() => {
+    testDir = createTestDir();
+  });
+
+  afterEach(() => {
+    rmSync(testDir, { recursive: true, force: true });
+  });
+
+  it('rejects custom Arpeggio capabilities by default', () => {
+    const piecesDir = join(testDir, '.takt', 'pieces');
+    mkdirSync(piecesDir, { recursive: true });
+    writeFileSync(join(testDir, 'rows.csv'), 'value\nhello\n');
+    writeFileSync(join(testDir, 'prompt.md'), 'Summarize {{rows}}');
+
+    writeFileSync(join(piecesDir, 'arpeggio-custom.yaml'), `
+name: arpeggio-custom
+movements:
+  - name: summarize
+    instruction: "unused"
+    arpeggio:
+      source: csv
+      source_path: ../../rows.csv
+      template: ../../prompt.md
+      merge:
+        strategy: custom
+        inline_js: 'return results.map(r => r.content).join(\"\\n\");'
+`);
+
+    expect(() => loadPiece('arpeggio-custom', testDir)).toThrow(/piece_arpeggio\.custom_merge_inline_js/);
+  });
+
+  it('allows custom Arpeggio capabilities when project config enables them', () => {
+    const piecesDir = join(testDir, '.takt', 'pieces');
+    mkdirSync(piecesDir, { recursive: true });
+    writeFileSync(
+      join(testDir, '.takt', 'config.yaml'),
+      [
+        'piece_arpeggio:',
+        '  custom_data_source_modules: true',
+        '  custom_merge_inline_js: true',
+      ].join('\n'),
+      'utf-8',
+    );
+    writeFileSync(join(testDir, 'rows.csv'), 'value\nhello\n');
+    writeFileSync(join(testDir, 'prompt.md'), 'Summarize {{rows}}');
+
+    writeFileSync(join(piecesDir, 'arpeggio-custom.yaml'), `
+name: arpeggio-custom
+movements:
+  - name: summarize
+    instruction: "unused"
+    arpeggio:
+      source: custom-source
+      source_path: ../../rows.csv
+      template: ../../prompt.md
+      merge:
+        strategy: custom
+        inline_js: 'return results.map(r => r.content).join(\"\\n\");'
+`);
+
+    const config = loadPiece('arpeggio-custom', testDir);
+
+    expect(config).not.toBeNull();
+    expect(config!.movements[0]?.arpeggio?.source).toBe('custom-source');
+    expect(config!.movements[0]?.arpeggio?.merge.inlineJs).toContain('join');
   });
 });

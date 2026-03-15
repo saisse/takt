@@ -626,6 +626,49 @@ piece_overrides:
     });
   });
 
+  describe('piece_arpeggio policy round-trip', () => {
+    it('should load piece_arpeggio policy block', () => {
+      const configPath = join(testDir, '.takt', 'config.yaml');
+      writeFileSync(
+        configPath,
+        [
+          'piece_arpeggio:',
+          '  custom_data_source_modules: true',
+          '  custom_merge_inline_js: false',
+          '  custom_merge_files: true',
+        ].join('\n'),
+        'utf-8',
+      );
+
+      const loaded = loadProjectConfig(testDir);
+
+      expect(loaded.pieceArpeggio).toEqual({
+        customDataSourceModules: true,
+        customMergeInlineJs: false,
+        customMergeFiles: true,
+      });
+    });
+
+    it('should round-trip piece_arpeggio policy block', () => {
+      const config: ProjectLocalConfig = {
+        pieceArpeggio: {
+          customDataSourceModules: true,
+          customMergeInlineJs: true,
+          customMergeFiles: false,
+        },
+      };
+
+      saveProjectConfig(testDir, config);
+      const reloaded = loadProjectConfig(testDir);
+
+      expect(reloaded.pieceArpeggio).toEqual({
+        customDataSourceModules: true,
+        customMergeInlineJs: true,
+        customMergeFiles: false,
+      });
+    });
+  });
+
   describe('tilde expansion for analytics path', () => {
     it('should expand "~/" in analytics.events_path on load', () => {
       const configPath = join(testDir, '.takt', 'config.yaml');

@@ -501,6 +501,12 @@ export const PieceRuntimePrepareConfigSchema = z.object({
   custom_scripts: z.boolean().optional(),
 }).strict();
 
+export const PieceArpeggioConfigSchema = z.object({
+  custom_data_source_modules: z.boolean().optional(),
+  custom_merge_inline_js: z.boolean().optional(),
+  custom_merge_files: z.boolean().optional(),
+}).strict();
+
 /** Piece category config schema (recursive) */
 export type PieceCategoryConfigNode = {
   pieces?: string[];
@@ -539,6 +545,8 @@ export const ProjectConfigSchema = z.object({
   runtime: RuntimeConfigSchema,
   /** Piece-level runtime.prepare policy */
   piece_runtime_prepare: PieceRuntimePrepareConfigSchema.optional(),
+  /** Piece-level Arpeggio policy */
+  piece_arpeggio: PieceArpeggioConfigSchema.optional(),
   /** Number of tasks to run concurrently in takt run (default from global: 1, max: 10) */
   concurrency: z.number().int().min(1).max(10).optional(),
   /** Polling interval in ms for picking up new tasks during takt run (default: 500, range: 100-5000) */

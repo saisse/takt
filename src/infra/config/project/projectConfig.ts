@@ -95,6 +95,7 @@ export function loadProjectConfig(projectDir: string): ProjectConfig {
     piece_overrides,
     runtime,
     piece_runtime_prepare,
+    piece_arpeggio,
   } = parsedConfig;
   const normalizedProvider = normalizeConfigProviderReference(
     provider as RawProviderReference,
@@ -158,6 +159,11 @@ export function loadProjectConfig(projectDir: string): ProjectConfig {
     runtime: normalizeRuntime(runtime),
     pieceRuntimePrepare: piece_runtime_prepare ? {
       customScripts: piece_runtime_prepare.custom_scripts,
+    } : undefined,
+    pieceArpeggio: piece_arpeggio ? {
+      customDataSourceModules: piece_arpeggio.custom_data_source_modules,
+      customMergeInlineJs: piece_arpeggio.custom_merge_inline_js,
+      customMergeFiles: piece_arpeggio.custom_merge_files,
     } : undefined,
   };
 }
@@ -259,6 +265,7 @@ export function saveProjectConfig(projectDir: string, config: ProjectConfig): vo
   delete savePayload.personaProviders;
   delete savePayload.taktProviders;
   delete savePayload.pieceRuntimePrepare;
+  delete savePayload.pieceArpeggio;
 
   const rawPieceOverrides = denormalizePieceOverrides(config.pieceOverrides);
   if (rawPieceOverrides) {
@@ -278,6 +285,15 @@ export function saveProjectConfig(projectDir: string, config: ProjectConfig): vo
     };
   } else {
     delete savePayload.piece_runtime_prepare;
+  }
+  if (config.pieceArpeggio) {
+    savePayload.piece_arpeggio = {
+      custom_data_source_modules: config.pieceArpeggio.customDataSourceModules,
+      custom_merge_inline_js: config.pieceArpeggio.customMergeInlineJs,
+      custom_merge_files: config.pieceArpeggio.customMergeFiles,
+    };
+  } else {
+    delete savePayload.piece_arpeggio;
   }
 
   const content = stringify(savePayload, { indent: 2 });
