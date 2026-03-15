@@ -137,6 +137,11 @@ export class GlobalConfigManager {
       syncConflictResolver: parsed.sync_conflict_resolver ? {
         autoApproveTools: parsed.sync_conflict_resolver.auto_approve_tools,
       } : undefined,
+      pieceMcpServers: parsed.piece_mcp_servers ? {
+        stdio: parsed.piece_mcp_servers.stdio,
+        sse: parsed.piece_mcp_servers.sse,
+        http: parsed.piece_mcp_servers.http,
+      } : undefined,
       preventSleep: parsed.prevent_sleep,
       notificationSound: parsed.notification_sound,
       notificationSoundEvents: parsed.notification_sound_events ? {

@@ -28,7 +28,7 @@ type RawStep = z.output<typeof PieceMovementRawSchema>;
 import type { MovementProviderOptions } from '../../../core/models/piece-types.js';
 import { isRuntimePreparePreset } from '../../../core/models/piece-types.js';
 import { normalizeRuntime } from '../configNormalizers.js';
-import type { PieceArpeggioConfig, PieceOverrides, PieceRuntimePrepareConfig } from '../../../core/models/config-types.js';
+import type { PieceArpeggioConfig, PieceMcpServersConfig, PieceOverrides, PieceRuntimePrepareConfig } from '../../../core/models/config-types.js';
 import { applyQualityGateOverrides } from './qualityGateOverrides.js';
 import { loadProjectConfig } from '../project/projectConfig.js';
 import { loadGlobalConfig } from '../global/globalConfig.js';
@@ -243,6 +243,7 @@ function normalizeStepFromRaw(
   projectOverrides?: PieceOverrides,
   globalOverrides?: PieceOverrides,
   pieceArpeggioPolicy?: PieceArpeggioConfig,
+  pieceMcpServersPolicy?: PieceMcpServersConfig,
 ): PieceMovement {
   const rules: PieceRule[] | undefined = step.rules?.map(normalizeRule);
 
@@ -281,6 +282,7 @@ function normalizeStepFromRaw(
     ? resolveRefToContent(step.instruction_template, sections.resolvedInstructions, pieceDir, 'instructions', context)
     : undefined;
   validatePieceArpeggio(step.name, step.arpeggio, pieceArpeggioPolicy);
+  validatePieceMcpServers(step.name, step.mcp_servers, pieceMcpServersPolicy);
 
   const result: PieceMovement = {
     name: step.name,
@@ -324,6 +326,7 @@ function normalizeStepFromRaw(
         projectOverrides,
         globalOverrides,
         pieceArpeggioPolicy,
+        pieceMcpServersPolicy,
       ),
     );
   }
@@ -392,6 +395,7 @@ export function normalizePieceConfig(
   globalOverrides?: PieceOverrides,
   pieceRuntimePreparePolicy?: PieceRuntimePrepareConfig,
   pieceArpeggioPolicy?: PieceArpeggioConfig,
+  pieceMcpServersPolicy?: PieceMcpServersConfig,
 ): PieceConfig {
   const parsed = PieceConfigRawSchema.parse(raw);
 
@@ -431,6 +435,7 @@ export function normalizePieceConfig(
       projectOverrides,
       globalOverrides,
       pieceArpeggioPolicy,
+      pieceMcpServersPolicy,
     ),
   );
 
@@ -485,6 +490,10 @@ export function loadPieceFromFile(filePath: string, projectDir: string): PieceCo
     projectConfig.pieceRuntimePrepare,
   );
   const pieceArpeggioPolicy = resolvePieceArpeggioPolicy(globalConfig.pieceArpeggio, projectConfig.pieceArpeggio);
+  const pieceMcpServersPolicy = {
+    ...globalConfig.pieceMcpServers,
+    ...projectConfig.pieceMcpServers,
+  };
 
   return normalizePieceConfig(
     raw,
@@ -494,6 +503,7 @@ export function loadPieceFromFile(filePath: string, projectDir: string): PieceCo
     globalOverrides,
     pieceRuntimePreparePolicy,
     pieceArpeggioPolicy,
+    pieceMcpServersPolicy,
   );
 }
 
@@ -584,6 +594,34 @@ function validatePieceArpeggio(
     throw new Error(
       `Movement "${movementName}" uses Arpeggio merge.file, which is disabled by default for pieces. `
       + 'Configure piece_arpeggio.custom_merge_files in project/global config to allow it.'
+    );
+  }
+}
+
+function isPieceMcpTransportAllowed(
+  config: NonNullable<NonNullable<RawStep['mcp_servers']>[string]>,
+  policy: PieceMcpServersConfig | undefined,
+): boolean {
+  const transport = config.type ?? 'stdio';
+  if (transport === 'stdio') return policy?.stdio ?? false;
+  if (transport === 'sse') return policy?.sse ?? false;
+  return policy?.http ?? false;
+}
+
+function validatePieceMcpServers(
+  movementName: string,
+  mcpServers: RawStep['mcp_servers'],
+  policy: PieceMcpServersConfig | undefined,
+): void {
+  if (!mcpServers) return;
+
+  for (const [serverName, config] of Object.entries(mcpServers)) {
+    if (isPieceMcpTransportAllowed(config, policy)) continue;
+    const transport = config.type ?? 'stdio';
+    throw new Error(
+      `Movement "${movementName}" uses MCP server "${serverName}" with transport "${transport}", `
+      + 'which is disabled by default for pieces. '
+      + 'Configure piece_mcp_servers in project/global config to allow it.'
     );
   }
 }

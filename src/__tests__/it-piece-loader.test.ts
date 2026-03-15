@@ -557,7 +557,7 @@ describe('Piece Loader IT: mcp_servers parsing', () => {
     rmSync(testDir, { recursive: true, force: true });
   });
 
-  it('should parse mcp_servers from YAML to PieceMovement.mcpServers', () => {
+  it('should reject stdio mcp_servers from piece YAML by default', () => {
     const piecesDir = join(testDir, '.takt', 'pieces');
     mkdirSync(piecesDir, { recursive: true });
 
@@ -586,17 +586,7 @@ movements:
     instruction: "Run E2E tests"
 `);
 
-    const config = loadPiece('with-mcp', testDir);
-
-    expect(config).not.toBeNull();
-    const e2eStep = config!.movements.find((s) => s.name === 'e2e-test');
-    expect(e2eStep).toBeDefined();
-    expect(e2eStep!.mcpServers).toEqual({
-      playwright: {
-        command: 'npx',
-        args: ['-y', '@anthropic-ai/mcp-server-playwright'],
-      },
-    });
+    expect(() => loadPiece('with-mcp', testDir)).toThrow(/piece_mcp_servers/);
   });
 
   it('should allow movement without mcp_servers', () => {
@@ -626,7 +616,7 @@ movements:
     expect(implementStep!.mcpServers).toBeUndefined();
   });
 
-  it('should parse mcp_servers with multiple servers and transports', () => {
+  it('should reject mcp_servers with multiple transports by default', () => {
     const piecesDir = join(testDir, '.takt', 'pieces');
     mkdirSync(piecesDir, { recursive: true });
 
@@ -654,20 +644,87 @@ movements:
     instruction: "Run tests"
 `);
 
-    const config = loadPiece('multi-mcp', testDir);
+    expect(() => loadPiece('multi-mcp', testDir)).toThrow(/piece_mcp_servers/);
+  });
+
+  it('should allow http/sse mcp_servers only when project config enables them', () => {
+    const piecesDir = join(testDir, '.takt', 'pieces');
+    mkdirSync(piecesDir, { recursive: true });
+    writeFileSync(
+      join(testDir, '.takt', 'config.yaml'),
+      ['piece_mcp_servers:', '  http: true', '  sse: true'].join('\n'),
+      'utf-8',
+    );
+
+    writeFileSync(join(piecesDir, 'remote-mcp.yaml'), `
+name: remote-mcp
+description: Piece with remote MCP servers
+max_movements: 5
+initial_movement: test
+
+movements:
+  - name: test
+    persona: coder
+    mcp_servers:
+      remote-api:
+        type: http
+        url: https://example.com/mcp
+      stream-api:
+        type: sse
+        url: https://example.com/sse
+    rules:
+      - condition: Done
+        next: COMPLETE
+    instruction: "Run tests"
+`);
+
+    const config = loadPiece('remote-mcp', testDir);
 
     expect(config).not.toBeNull();
     const testStep = config!.movements.find((s) => s.name === 'test');
-    expect(testStep).toBeDefined();
-    expect(testStep!.mcpServers).toEqual({
+    expect(testStep?.mcpServers).toEqual({
+      'remote-api': {
+        type: 'http',
+        url: 'https://example.com/mcp',
+      },
+      'stream-api': {
+        type: 'sse',
+        url: 'https://example.com/sse',
+      },
+    });
+  });
+
+  it('should allow stdio mcp_servers only when project config enables them', () => {
+    const piecesDir = join(testDir, '.takt', 'pieces');
+    mkdirSync(piecesDir, { recursive: true });
+    writeFileSync(join(testDir, '.takt', 'config.yaml'), 'piece_mcp_servers:\n  stdio: true\n');
+
+    writeFileSync(join(piecesDir, 'with-mcp.yaml'), `
+name: with-mcp
+description: Piece with MCP servers
+max_movements: 5
+initial_movement: e2e-test
+
+movements:
+  - name: e2e-test
+    persona: coder
+    mcp_servers:
+      playwright:
+        command: npx
+        args: ["-y", "@anthropic-ai/mcp-server-playwright"]
+    rules:
+      - condition: Done
+        next: COMPLETE
+    instruction: "Run E2E tests"
+`);
+
+    const config = loadPiece('with-mcp', testDir);
+
+    expect(config).not.toBeNull();
+    expect(config!.movements.find((s) => s.name === 'e2e-test')?.mcpServers).toEqual({
       playwright: {
         command: 'npx',
         args: ['-y', '@anthropic-ai/mcp-server-playwright'],
-      },
-      'remote-api': {
-        type: 'http',
-        url: 'http://localhost:3000/mcp',
-        headers: { Authorization: 'Bearer token123' },
       },
     });
   });

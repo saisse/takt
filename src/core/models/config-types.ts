@@ -121,6 +121,16 @@ export interface SyncConflictResolverConfig {
   autoApproveTools?: boolean;
 }
 
+/** Piece-level MCP transport policy */
+export interface PieceMcpServersConfig {
+  /** Allow stdio MCP servers from piece YAML (default: false) */
+  stdio?: boolean;
+  /** Allow SSE MCP servers from piece YAML (default: false) */
+  sse?: boolean;
+  /** Allow HTTP MCP servers from piece YAML (default: false) */
+  http?: boolean;
+}
+
 
 /** Notification sound toggles per event timing */
 export interface NotificationSoundEventsConfig {
@@ -192,6 +202,8 @@ export interface ProjectConfig {
   pieceArpeggio?: PieceArpeggioConfig;
   /** Sync conflict resolver behavior */
   syncConflictResolver?: SyncConflictResolverConfig;
+  /** Piece-level MCP transport policy */
+  pieceMcpServers?: PieceMcpServersConfig;
 }
 
 /**

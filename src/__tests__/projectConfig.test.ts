@@ -695,6 +695,33 @@ piece_overrides:
     });
   });
 
+  describe('piece_mcp_servers round-trip', () => {
+    it('should load piece_mcp_servers config block', () => {
+      const configPath = join(testDir, '.takt', 'config.yaml');
+      writeFileSync(
+        configPath,
+        ['piece_mcp_servers:', '  stdio: true', '  http: false', '  sse: true'].join('\n'),
+        'utf-8',
+      );
+
+      const loaded = loadProjectConfig(testDir);
+
+      expect(loaded.pieceMcpServers).toEqual({ stdio: true, http: false, sse: true });
+    });
+
+    it('should round-trip piece_mcp_servers config block', () => {
+      const config: ProjectLocalConfig = {
+        pieceMcpServers: { stdio: true, http: true, sse: false },
+      };
+
+      saveProjectConfig(testDir, config);
+      const reloaded = loadProjectConfig(testDir);
+
+      expect(reloaded.pieceMcpServers).toEqual({ stdio: true, http: true, sse: false });
+    });
+  });
+
+
   describe('tilde expansion for analytics path', () => {
     it('should expand "~/" in analytics.events_path on load', () => {
       const configPath = join(testDir, '.takt', 'config.yaml');

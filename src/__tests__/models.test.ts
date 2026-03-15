@@ -436,6 +436,25 @@ describe('PieceConfigRawSchema', () => {
     });
   });
 
+  it('should parse piece_mcp_servers config blocks', () => {
+    const project = ProjectConfigSchema.parse({
+      piece_mcp_servers: {
+        stdio: true,
+        sse: false,
+        http: true,
+      },
+    } as unknown) as Record<string, unknown>;
+
+    const global = GlobalConfigSchema.parse({
+      piece_mcp_servers: {
+        http: true,
+      },
+    } as unknown) as Record<string, unknown>;
+
+    expect(project.piece_mcp_servers).toEqual({ stdio: true, sse: false, http: true });
+    expect(global.piece_mcp_servers).toEqual({ http: true });
+  });
+
   it('should allow omitting mcp_servers', () => {
     const config = {
       name: 'test-piece',

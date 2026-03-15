@@ -511,6 +511,12 @@ export const SyncConflictResolverConfigSchema = z.object({
   auto_approve_tools: z.boolean().optional(),
 }).strict();
 
+export const PieceMcpServersConfigSchema = z.object({
+  stdio: z.boolean().optional(),
+  sse: z.boolean().optional(),
+  http: z.boolean().optional(),
+}).strict();
+
 
 /** Piece category config schema (recursive) */
 export type PieceCategoryConfigNode = {
@@ -554,6 +560,8 @@ export const ProjectConfigSchema = z.object({
   piece_arpeggio: PieceArpeggioConfigSchema.optional(),
   /** Sync conflict resolver behavior */
   sync_conflict_resolver: SyncConflictResolverConfigSchema.optional(),
+  /** Piece-level MCP transport policy */
+  piece_mcp_servers: PieceMcpServersConfigSchema.optional(),
   /** Number of tasks to run concurrently in takt run (default from global: 1, max: 10) */
   concurrency: z.number().int().min(1).max(10).optional(),
   /** Polling interval in ms for picking up new tasks during takt run (default: 500, range: 100-5000) */

@@ -103,6 +103,7 @@ export function loadProjectConfig(projectDir: string): ProjectConfig {
     piece_runtime_prepare,
     piece_arpeggio,
     sync_conflict_resolver,
+    piece_mcp_servers,
   } = parsedConfig;
   const normalizedProvider = normalizeConfigProviderReference(
     provider as RawProviderReference,
@@ -167,6 +168,11 @@ export function loadProjectConfig(projectDir: string): ProjectConfig {
     pieceRuntimePrepare: normalizePieceRuntimePreparePolicy(piece_runtime_prepare),
     pieceArpeggio: normalizePieceArpeggioPolicy(piece_arpeggio),
     syncConflictResolver: normalizeSyncConflictResolver(sync_conflict_resolver),
+    pieceMcpServers: piece_mcp_servers ? {
+      stdio: piece_mcp_servers.stdio,
+      sse: piece_mcp_servers.sse,
+      http: piece_mcp_servers.http,
+    } : undefined,
   };
 }
 
@@ -248,6 +254,7 @@ export function saveProjectConfig(projectDir: string, config: ProjectConfig): vo
     'branchNameStrategy', 'minimalOutput', 'taskPollIntervalMs',
     'interactivePreviewMovements', 'personaProviders', 'taktProviders',
     'pieceRuntimePrepare', 'pieceArpeggio', 'syncConflictResolver',
+    'pieceMcpServers',
   ] as const) {
     delete savePayload[k];
   }
@@ -281,6 +288,11 @@ export function saveProjectConfig(projectDir: string, config: ProjectConfig): vo
     savePayload.sync_conflict_resolver = rawSyncResolver;
   } else {
     delete savePayload.sync_conflict_resolver;
+  }
+  if (config.pieceMcpServers) {
+    savePayload.piece_mcp_servers = config.pieceMcpServers;
+  } else {
+    delete savePayload.piece_mcp_servers;
   }
 
   const content = stringify(savePayload, { indent: 2 });
