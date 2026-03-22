@@ -72,6 +72,33 @@ interactive_preview_movements: 3  # Movement previews in interactive mode (0-10,
 # cursor_cli_path: /usr/local/bin/cursor-agent
 # copilot_cli_path: /usr/local/bin/github-copilot-cli
 
+# VCS provider (optional)
+# Auto-detected from git remote URL (github.com → github, gitlab.com → gitlab)
+# Set explicitly for self-hosted instances
+# vcs_provider: github                   # 'github' or 'gitlab'
+
+# Interactive assistant provider (optional)
+# Route the interactive planning conversation to a separate provider/model
+# taktProviders:
+#   assistant:
+#     provider: claude
+#     model: opus
+
+# Piece security policies (all default to deny)
+# These settings control what untrusted piece YAMLs are allowed to do.
+# pieceMcpServers:                       # MCP server transport policy
+#   stdio: true                          # Allow stdio transport (default: false)
+#   sse: false                           # Allow SSE transport (default: false)
+#   http: false                          # Allow HTTP transport (default: false)
+# pieceArpeggio:                         # Arpeggio custom code policy
+#   customDataSourceModules: false       # Allow custom data source modules (default: false)
+#   customMergeInlineJs: false           # Allow inline JS merge functions (default: false)
+#   customMergeFiles: false              # Allow external merge files (default: false)
+# pieceRuntimePrepare:                   # Runtime prepare policy
+#   customScripts: false                 # Allow custom scripts (default: false; builtin presets always allowed)
+# syncConflictResolver:                  # Sync conflict resolver policy
+#   autoApproveTools: false              # Allow auto-approval of tools (default: false)
+
 # Builtin piece filtering (optional)
 # builtin_pieces_enabled: true           # Set false to disable all builtins
 # disabled_builtins: [magi]              # Disable specific builtin pieces
@@ -128,6 +155,12 @@ interactive_preview_movements: 3  # Movement previews in interactive mode (0-10,
 | `auto_fetch` | boolean | `false` | Fetch remote before cloning to keep clones up-to-date |
 | `base_branch` | string | - | Base branch for clone creation (defaults to remote default branch) |
 | `piece_categories_file` | string | - | Path to piece categories file |
+| `vcs_provider` | `"github"` \| `"gitlab"` | auto-detect | VCS provider (auto-detected from git remote URL) |
+| `taktProviders` | object | - | TAKT internal provider overrides (e.g., `assistant: { provider: claude, model: opus }`) |
+| `pieceMcpServers` | object | all `false` | MCP server transport policy (`stdio`, `sse`, `http` toggles) |
+| `pieceArpeggio` | object | all `false` | Arpeggio custom code policy (`customDataSourceModules`, `customMergeInlineJs`, `customMergeFiles`) |
+| `pieceRuntimePrepare` | object | `{ customScripts: false }` | Runtime prepare policy (builtin presets always allowed) |
+| `syncConflictResolver` | object | `{ autoApproveTools: false }` | Sync conflict resolver policy |
 
 ## Project Configuration
 
@@ -171,6 +204,12 @@ concurrency: 2                # Parallel task count for takt run in this project
 | `base_branch` | string | - | Base branch for clone creation (overrides global, default: remote default branch) |
 | `provider_options` | object | - | Provider-specific options |
 | `provider_profiles` | object | - | Provider-specific permission profiles |
+| `vcs_provider` | `"github"` \| `"gitlab"` | auto-detect | VCS provider (overrides global) |
+| `taktProviders` | object | - | TAKT internal provider overrides (e.g., `assistant: { provider: claude, model: opus }`) |
+| `pieceMcpServers` | object | - | MCP server transport policy (overrides global) |
+| `pieceArpeggio` | object | - | Arpeggio custom code policy (overrides global) |
+| `pieceRuntimePrepare` | object | - | Runtime prepare policy (overrides global) |
+| `syncConflictResolver` | object | - | Sync conflict resolver policy (overrides global) |
 
 Project config values override global config when both are set.
 
