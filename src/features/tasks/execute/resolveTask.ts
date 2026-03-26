@@ -94,7 +94,7 @@ export function resolveTaskIssue(issueNumber: number | undefined, cwd: string): 
   }
 
   try {
-    const issue = gitProvider.fetchIssue(issueNumber);
+    const issue = gitProvider.fetchIssue(issueNumber, cwd);
     return [issue];
   } catch (e) {
     log.info('Failed to fetch issue for PR body, continuing without issue info', { issueNumber, error: getErrorMessage(e) });

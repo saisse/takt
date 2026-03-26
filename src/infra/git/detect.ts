@@ -74,8 +74,8 @@ export function getRemoteHostname(cwd: string): string | undefined {
  *
  * @returns `'github'` | `'gitlab'` | `undefined`
  */
-export function detectVcsProvider(): VcsProviderType | undefined {
-  const hostname = getRemoteHostname(process.cwd());
+export function detectVcsProvider(cwd?: string): VcsProviderType | undefined {
+  const hostname = getRemoteHostname(cwd ?? process.cwd());
   if (!hostname) {
     return undefined;
   }

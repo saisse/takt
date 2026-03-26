@@ -48,7 +48,7 @@ describe('findExistingMr', () => {
     );
 
     // When
-    const result = findExistingMr('/project', 'task/fix-bug');
+    const result = findExistingMr('task/fix-bug', '/project');
 
     // Then
     expect(result).toEqual({ number: 42, url: 'https://gitlab.com/org/repo/-/merge_requests/42' });
@@ -59,7 +59,7 @@ describe('findExistingMr', () => {
     mockExecFileSync.mockReturnValue(JSON.stringify([]));
 
     // When
-    findExistingMr('/project', 'feat/my-feature');
+    findExistingMr('feat/my-feature', '/project');
 
     // Then
     const call = mockExecFileSync.mock.calls[0];
@@ -75,7 +75,7 @@ describe('findExistingMr', () => {
     mockExecFileSync.mockReturnValue(JSON.stringify([]));
 
     // When
-    const result = findExistingMr('/project', 'task/no-mr');
+    const result = findExistingMr('task/no-mr', '/project');
 
     // Then
     expect(result).toBeUndefined();
@@ -86,7 +86,7 @@ describe('findExistingMr', () => {
     mockExecFileSync.mockImplementation(() => { throw new Error('glab: command not found'); });
 
     // When
-    const result = findExistingMr('/project', 'task/fix-bug');
+    const result = findExistingMr('task/fix-bug', '/project');
 
     // Then
     expect(result).toBeUndefined();
@@ -98,7 +98,7 @@ describe('findExistingMr', () => {
     mockExecFileSync.mockReturnValue(JSON.stringify([]));
 
     // When
-    findExistingMr('/my/project', 'feat/branch');
+    findExistingMr('feat/branch', '/my/project');
 
     // Then
     expect(mockCheckGlabCli).toHaveBeenCalledWith('/my/project');
@@ -111,11 +111,11 @@ describe('createMergeRequest', () => {
     mockExecFileSync.mockReturnValue('https://gitlab.com/org/repo/-/merge_requests/1\n');
 
     // When
-    const result = createMergeRequest('/project', {
+    const result = createMergeRequest({
       branch: 'feat/my-branch',
       title: 'My MR',
       body: 'MR body',
-    });
+    }, '/project');
 
     // Then
     expect(result.success).toBe(true);
@@ -127,11 +127,11 @@ describe('createMergeRequest', () => {
     mockExecFileSync.mockReturnValue('https://gitlab.com/org/repo/-/merge_requests/2\n');
 
     // When
-    createMergeRequest('/project', {
+    createMergeRequest({
       branch: 'feat/my-branch',
       title: 'My MR',
       body: 'MR body',
-    });
+    }, '/project');
 
     // Then
     const call = mockExecFileSync.mock.calls[0];
@@ -144,11 +144,11 @@ describe('createMergeRequest', () => {
     mockExecFileSync.mockReturnValue('https://gitlab.com/org/repo/-/merge_requests/3\n');
 
     // When
-    createMergeRequest('/project', {
+    createMergeRequest({
       branch: 'feat/my-branch',
       title: 'My MR',
       body: 'MR body',
-    });
+    }, '/project');
 
     // Then
     const call = mockExecFileSync.mock.calls[0];
@@ -161,12 +161,12 @@ describe('createMergeRequest', () => {
     mockExecFileSync.mockReturnValue('https://gitlab.com/org/repo/-/merge_requests/4\n');
 
     // When
-    createMergeRequest('/project', {
+    createMergeRequest({
       branch: 'feat/my-branch',
       title: 'Draft MR',
       body: 'body',
       draft: true,
-    });
+    }, '/project');
 
     // Then
     const call = mockExecFileSync.mock.calls[0];
@@ -178,12 +178,12 @@ describe('createMergeRequest', () => {
     mockExecFileSync.mockReturnValue('https://gitlab.com/org/repo/-/merge_requests/5\n');
 
     // When
-    createMergeRequest('/project', {
+    createMergeRequest({
       branch: 'feat/my-branch',
       title: 'MR',
       body: 'body',
       draft: false,
-    });
+    }, '/project');
 
     // Then
     const call = mockExecFileSync.mock.calls[0];
@@ -195,12 +195,12 @@ describe('createMergeRequest', () => {
     mockExecFileSync.mockReturnValue('https://gitlab.com/org/repo/-/merge_requests/6\n');
 
     // When
-    createMergeRequest('/project', {
+    createMergeRequest({
       branch: 'feat/my-branch',
       title: 'MR',
       body: 'body',
       base: 'develop',
-    });
+    }, '/project');
 
     // Then
     const call = mockExecFileSync.mock.calls[0];
@@ -213,11 +213,11 @@ describe('createMergeRequest', () => {
     mockExecFileSync.mockImplementation(() => { throw new Error('API error'); });
 
     // When
-    const result = createMergeRequest('/project', {
+    const result = createMergeRequest({
       branch: 'feat/fail',
       title: 'Fail MR',
       body: 'body',
-    });
+    }, '/project');
 
     // Then
     expect(result.success).toBe(false);
@@ -230,11 +230,11 @@ describe('createMergeRequest', () => {
     mockExecFileSync.mockReturnValue('https://gitlab.com/org/repo/-/merge_requests/99\n');
 
     // When
-    createMergeRequest('/my/project', {
+    createMergeRequest({
       branch: 'feat/branch',
       title: 'MR',
       body: 'body',
-    });
+    }, '/my/project');
 
     // Then
     expect(mockCheckGlabCli).toHaveBeenCalledWith('/my/project');
@@ -250,7 +250,7 @@ describe('createMergeRequest', () => {
     };
 
     // When
-    const execute = () => createMergeRequest('/project', options);
+    const execute = () => createMergeRequest(options, '/project');
 
     // Then
     expect(execute).toThrow('--repo is not supported with GitLab provider. Use cwd context instead.');
@@ -265,7 +265,7 @@ describe('commentOnMr', () => {
     mockExecFileSync.mockReturnValue('');
 
     // When
-    const result = commentOnMr('/project', 42, 'LGTM');
+    const result = commentOnMr(42, 'LGTM', '/project');
 
     // Then
     expect(result).toEqual({ success: true });
@@ -276,7 +276,7 @@ describe('commentOnMr', () => {
     mockExecFileSync.mockReturnValue('');
 
     // When
-    commentOnMr('/project', 42, 'Comment body');
+    commentOnMr(42, 'Comment body', '/project');
 
     // Then
     const call = mockExecFileSync.mock.calls[0];
@@ -291,7 +291,7 @@ describe('commentOnMr', () => {
     mockExecFileSync.mockImplementation(() => { throw new Error('Permission denied'); });
 
     // When
-    const result = commentOnMr('/project', 42, 'comment');
+    const result = commentOnMr(42, 'comment', '/project');
 
     // Then
     expect(result.success).toBe(false);
@@ -304,7 +304,7 @@ describe('commentOnMr', () => {
     mockExecFileSync.mockReturnValue('');
 
     // When
-    commentOnMr('/my/project', 42, 'LGTM');
+    commentOnMr(42, 'LGTM', '/my/project');
 
     // Then
     expect(mockCheckGlabCli).toHaveBeenCalledWith('/my/project');
@@ -378,7 +378,7 @@ describe('fetchMrReviewComments', () => {
       .mockReturnValueOnce(JSON.stringify(discussionsResponse));
 
     // When
-    const result = fetchMrReviewComments(456);
+    const result = fetchMrReviewComments(456, '/project');
 
     // Then
     expect(result.number).toBe(456);
@@ -410,7 +410,7 @@ describe('fetchMrReviewComments', () => {
       .mockReturnValueOnce(JSON.stringify([])); // no discussions
 
     // When
-    const result = fetchMrReviewComments(10);
+    const result = fetchMrReviewComments(10, '/project');
 
     // Then
     expect(result.comments).toEqual([
@@ -428,7 +428,7 @@ describe('fetchMrReviewComments', () => {
       .mockReturnValueOnce(JSON.stringify([]));
 
     // When
-    const result = fetchMrReviewComments(11);
+    const result = fetchMrReviewComments(11, '/project');
 
     // Then
     expect(result.body).toBe('');
@@ -466,7 +466,7 @@ describe('fetchMrReviewComments', () => {
       .mockReturnValueOnce(JSON.stringify(discussionsResponse));
 
     // When
-    const result = fetchMrReviewComments(12);
+    const result = fetchMrReviewComments(12, '/project');
 
     // Then
     expect(result.reviews).toEqual([
@@ -479,7 +479,7 @@ describe('fetchMrReviewComments', () => {
     mockExecFileSync.mockImplementation(() => { throw new Error('glab: MR not found'); });
 
     // When / Then
-    expect(() => fetchMrReviewComments(999)).toThrow();
+    expect(() => fetchMrReviewComments(999, '/project')).toThrow();
   });
 
   it('glab mr view が不正な JSON を返した場合は明確なエラーメッセージをスローする', () => {
@@ -487,7 +487,7 @@ describe('fetchMrReviewComments', () => {
     mockExecFileSync.mockReturnValue('<html>502 Bad Gateway</html>');
 
     // When / Then
-    expect(() => fetchMrReviewComments(100)).toThrow('glab returned invalid JSON');
+    expect(() => fetchMrReviewComments(100, '/project')).toThrow('glab returned invalid JSON');
   });
 
   it('notes API が不正な JSON を返した場合は明確なエラーメッセージをスローする', () => {
@@ -499,7 +499,7 @@ describe('fetchMrReviewComments', () => {
       .mockReturnValueOnce('invalid json');
 
     // When / Then
-    expect(() => fetchMrReviewComments(101)).toThrow('glab returned invalid JSON');
+    expect(() => fetchMrReviewComments(101, '/project')).toThrow('glab returned invalid JSON');
   });
 
   it('discussions API が不正な JSON を返した場合は明確なエラーメッセージをスローする', () => {
@@ -512,7 +512,7 @@ describe('fetchMrReviewComments', () => {
       .mockReturnValueOnce('not json');
 
     // When / Then
-    expect(() => fetchMrReviewComments(102)).toThrow('glab returned invalid JSON');
+    expect(() => fetchMrReviewComments(102, '/project')).toThrow('glab returned invalid JSON');
   });
 
   it('diffs, notes, discussions API に per_page パラメータが含まれる', () => {
@@ -525,7 +525,7 @@ describe('fetchMrReviewComments', () => {
       .mockReturnValueOnce(JSON.stringify([]));
 
     // When
-    fetchMrReviewComments(200);
+    fetchMrReviewComments(200, '/project');
 
     // Then: verify diffs API call has per_page (call index 1, after mr view)
     const diffsCall = mockExecFileSync.mock.calls[1];
@@ -563,7 +563,7 @@ describe('fetchMrReviewComments', () => {
       .mockReturnValueOnce(JSON.stringify([])); // discussions (single page)
 
     // When
-    const result = fetchMrReviewComments(300);
+    const result = fetchMrReviewComments(300, '/project');
 
     // Then
     expect(result.comments).toHaveLength(101);
@@ -589,7 +589,7 @@ describe('fetchMrReviewComments', () => {
       .mockReturnValueOnce(JSON.stringify([])); // discussions
 
     // When
-    fetchMrReviewComments(301);
+    fetchMrReviewComments(301, '/project');
 
     // Then: verify page=1 for notes (call index 2, after mr view + diffs API)
     const notesCall1 = mockExecFileSync.mock.calls[2];
@@ -631,7 +631,7 @@ describe('fetchMrReviewComments', () => {
       .mockReturnValueOnce(JSON.stringify(secondPageDiscussions));
 
     // When
-    const result = fetchMrReviewComments(302);
+    const result = fetchMrReviewComments(302, '/project');
 
     // Then
     expect(result.reviews).toHaveLength(101);
@@ -670,7 +670,7 @@ describe('fetchMrReviewComments', () => {
       .mockReturnValueOnce(JSON.stringify(secondPage));
 
     // When
-    fetchMrReviewComments(303);
+    fetchMrReviewComments(303, '/project');
 
     // Then: discussions page=1 (call index 3, after mr view + diffs API + notes)
     const discCall1 = mockExecFileSync.mock.calls[3];
@@ -723,7 +723,7 @@ describe('fetchMrReviewComments', () => {
       .mockReturnValueOnce(JSON.stringify(discussionsResponse));
 
     // When
-    const result = fetchMrReviewComments(400);
+    const result = fetchMrReviewComments(400, '/project');
 
     // Then: DiffNote excluded from comments, only general comments remain
     expect(result.comments).toEqual([
@@ -750,7 +750,7 @@ describe('fetchMrReviewComments', () => {
       .mockReturnValueOnce(JSON.stringify([]));
 
     // When
-    const result = fetchMrReviewComments(500);
+    const result = fetchMrReviewComments(500, '/project');
 
     // Then
     expect(result.files).toEqual(['src/a.ts', 'src/b.ts']);
@@ -771,7 +771,7 @@ describe('fetchMrReviewComments', () => {
       .mockReturnValueOnce(JSON.stringify([]));
 
     // When
-    const result = fetchMrReviewComments(501);
+    const result = fetchMrReviewComments(501, '/project');
 
     // Then
     expect(result.files).toEqual([]);
@@ -792,10 +792,45 @@ describe('fetchMrReviewComments', () => {
       .mockReturnValueOnce(JSON.stringify([])); // discussions
 
     // When
-    fetchMrReviewComments(304);
+    fetchMrReviewComments(304, '/project');
 
     // Then: 4 calls total (mr view + diffs API + 1 page notes + 1 page discussions)
     expect(mockExecFileSync).toHaveBeenCalledTimes(4);
+  });
+
+  it('cwd を glab mr view の execFileSync に渡す', () => {
+    // Given
+    const mrViewResponse = makeMrViewResponse({ iid: 600 });
+    mockExecFileSync
+      .mockReturnValueOnce(JSON.stringify(mrViewResponse))
+      .mockReturnValueOnce(JSON.stringify([])) // diffs API
+      .mockReturnValueOnce(JSON.stringify([]))
+      .mockReturnValueOnce(JSON.stringify([]));
+
+    // When
+    fetchMrReviewComments(600, '/worktree/clone');
+
+    // Then: glab mr view に cwd が渡される
+    const mrViewCall = mockExecFileSync.mock.calls[0];
+    expect(mrViewCall[2]).toHaveProperty('cwd', '/worktree/clone');
+  });
+
+  it('cwd を fetchAllPages（diffs, notes, discussions）にも伝搬する', () => {
+    // Given
+    const mrViewResponse = makeMrViewResponse({ iid: 601 });
+    mockExecFileSync
+      .mockReturnValueOnce(JSON.stringify(mrViewResponse))
+      .mockReturnValueOnce(JSON.stringify([])) // diffs API
+      .mockReturnValueOnce(JSON.stringify([]))
+      .mockReturnValueOnce(JSON.stringify([]));
+
+    // When
+    fetchMrReviewComments(601, '/worktree/clone');
+
+    // Then: すべての execFileSync 呼び出しに cwd が渡される
+    for (const call of mockExecFileSync.mock.calls) {
+      expect(call[2]).toHaveProperty('cwd', '/worktree/clone');
+    }
   });
 
 });

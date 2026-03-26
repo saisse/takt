@@ -81,11 +81,11 @@ export async function postExecutionFlow(options: PostExecutionOptions): Promise<
     }
     const gitProvider = getGitProvider();
     const report = pieceIdentifier ? `Piece \`${pieceIdentifier}\` completed successfully.` : 'Task completed successfully.';
-    const existingPr = gitProvider.findExistingPr(projectCwd, branch);
+    const existingPr = gitProvider.findExistingPr(branch, projectCwd);
     if (existingPr) {
       // push済みなので、新コミットはPRに自動反映される
       const commentBody = buildPrBody(issues, report);
-      const commentResult = gitProvider.commentOnPr(projectCwd, existingPr.number, commentBody);
+      const commentResult = gitProvider.commentOnPr(existingPr.number, commentBody, projectCwd);
       if (commentResult.success) {
         success(`PR updated with comment: ${existingPr.url}`);
         return { prUrl: existingPr.url };
@@ -104,14 +104,14 @@ export async function postExecutionFlow(options: PostExecutionOptions): Promise<
       const issuePrefix = firstIssue ? `[#${firstIssue.number}] ` : '';
       const truncatedTask = task.length > 100 - issuePrefix.length ? `${task.slice(0, 100 - issuePrefix.length - 3)}...` : task;
       const prTitle = issuePrefix + truncatedTask;
-      const prResult: CreatePrResult = createPullRequestSafely(gitProvider, projectCwd, {
+      const prResult: CreatePrResult = createPullRequestSafely(gitProvider, {
         branch,
         title: prTitle,
         body: prBody,
         base: baseBranch,
         repo,
         draft: draftPr,
-      });
+      }, projectCwd);
       if (prResult.success) {
         success(`PR created: ${prResult.url}`);
         return { prUrl: prResult.url };

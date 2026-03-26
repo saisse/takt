@@ -313,6 +313,47 @@ describe('detectVcsProvider', () => {
       expect(result).toBe('gitlab');
     });
   });
+
+  describe('cwd パラメータ', () => {
+    it('cwd を指定した場合は getRemoteHostname にそのまま渡す', () => {
+      // Given
+      mockExecFileSync.mockReturnValue('https://github.com/org/repo.git\n');
+
+      // When
+      const result = detectVcsProvider('/worktree/clone');
+
+      // Then
+      expect(result).toBe('github');
+      const call = mockExecFileSync.mock.calls[0];
+      expect(call[2]).toHaveProperty('cwd', '/worktree/clone');
+    });
+
+    it('cwd 省略時は process.cwd() をフォールバックとして使用する', () => {
+      // Given
+      mockExecFileSync.mockReturnValue('https://gitlab.com/org/repo.git\n');
+
+      // When
+      const result = detectVcsProvider();
+
+      // Then
+      expect(result).toBe('gitlab');
+      const call = mockExecFileSync.mock.calls[0];
+      expect(call[2]).toHaveProperty('cwd', process.cwd());
+    });
+
+    it('worktree パスを渡した場合にそのリポジトリのリモートで検出する', () => {
+      // Given: worktree ではセルフホストGitLab
+      mockExecFileSync.mockReturnValue('https://gitlab.company.com/org/repo.git\n');
+
+      // When
+      const result = detectVcsProvider('/tmp/worktree');
+
+      // Then: セルフホストは undefined
+      expect(result).toBeUndefined();
+      const call = mockExecFileSync.mock.calls[0];
+      expect(call[2]).toHaveProperty('cwd', '/tmp/worktree');
+    });
+  });
 });
 
 describe('VCS_PROVIDER_TYPES', () => {

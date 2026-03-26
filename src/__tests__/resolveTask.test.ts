@@ -483,7 +483,7 @@ describe('resolveTaskIssue', () => {
     // Then
     expect(result).toEqual([issue]);
     expect(mockProvider.checkCliStatus).toHaveBeenCalledWith('/my/project');
-    expect(mockProvider.fetchIssue).toHaveBeenCalledWith(42);
+    expect(mockProvider.fetchIssue).toHaveBeenCalledWith(42, '/my/project');
   });
 
   it('fetchIssue が例外を投げた場合は undefined を返す', () => {
@@ -500,6 +500,6 @@ describe('resolveTaskIssue', () => {
     // Then
     expect(result).toBeUndefined();
     expect(mockProvider.checkCliStatus).toHaveBeenCalledWith('/my/project');
-    expect(mockProvider.fetchIssue).toHaveBeenCalledWith(42);
+    expect(mockProvider.fetchIssue).toHaveBeenCalledWith(42, '/my/project');
   });
 });

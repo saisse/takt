@@ -70,9 +70,9 @@ describe('postExecutionFlow', () => {
     mockPushBranch.mockReturnValue(undefined);
     mockCommentOnPr.mockReturnValue({ success: true });
     mockCreatePullRequest.mockReturnValue({ success: true, url: 'https://github.com/org/repo/pull/1' });
-    mockCreatePullRequestSafely.mockImplementation((provider, cwd, options) => {
+    mockCreatePullRequestSafely.mockImplementation((provider, options, cwd) => {
       try {
-        return provider.createPullRequest(cwd, options);
+        return provider.createPullRequest(options, cwd);
       } catch (error) {
         return {
           success: false,
@@ -96,7 +96,7 @@ describe('postExecutionFlow', () => {
 
     await postExecutionFlow(baseOptions);
 
-    expect(mockCommentOnPr).toHaveBeenCalledWith('/project', 42, 'pr-body');
+    expect(mockCommentOnPr).toHaveBeenCalledWith(42, 'pr-body', '/project');
     expect(mockCreatePullRequest).not.toHaveBeenCalled();
   });
 
@@ -130,8 +130,8 @@ describe('postExecutionFlow', () => {
     await postExecutionFlow({ ...baseOptions, draftPr: true });
 
     expect(mockCreatePullRequest).toHaveBeenCalledWith(
-      '/project',
       expect.objectContaining({ draft: true }),
+      '/project',
     );
   });
 
@@ -141,8 +141,8 @@ describe('postExecutionFlow', () => {
     await postExecutionFlow({ ...baseOptions, draftPr: false });
 
     expect(mockCreatePullRequest).toHaveBeenCalledWith(
-      '/project',
       expect.objectContaining({ draft: false }),
+      '/project',
     );
   });
 
@@ -173,13 +173,13 @@ describe('postExecutionFlow', () => {
     // Then: the workflow should continue into the existing pr_failed path.
     expect(mockPushBranch).toHaveBeenCalledWith('/project', 'task/fix-the-bug');
     expect(mockCreatePullRequest).toHaveBeenCalledWith(
-      '/project',
       expect.objectContaining({
         branch: 'task/fix-the-bug',
         base: 'main',
         draft: false,
         title: 'Fix the bug',
       }),
+      '/project',
     );
     expect(result.prFailed).toBe(true);
     expect(result.prError).toBe('Failed to create pull request.');
@@ -309,8 +309,8 @@ describe('postExecutionFlow', () => {
     });
 
     expect(mockCreatePullRequest).toHaveBeenCalledWith(
-      '/project',
       expect.objectContaining({ title: '[#123] Fix the bug' }),
+      '/project',
     );
   });
 
@@ -323,8 +323,8 @@ describe('postExecutionFlow', () => {
     });
 
     expect(mockCreatePullRequest).toHaveBeenCalledWith(
-      '/project',
       expect.objectContaining({ title: 'Fix the bug' }),
+      '/project',
     );
   });
 
@@ -334,8 +334,8 @@ describe('postExecutionFlow', () => {
     await postExecutionFlow(baseOptions);
 
     expect(mockCreatePullRequest).toHaveBeenCalledWith(
-      '/project',
       expect.objectContaining({ title: 'Fix the bug' }),
+      '/project',
     );
   });
 
@@ -351,8 +351,8 @@ describe('postExecutionFlow', () => {
     });
 
     expect(mockCreatePullRequest).toHaveBeenCalledWith(
-      '/project',
       expect.objectContaining({ title: expectedTitle }),
+      '/project',
     );
   });
 });

@@ -33,11 +33,11 @@ export function checkGlabCli(cwd: string): CliStatus {
     : ['auth', 'status'];
 
   try {
-    execFileSync('glab', authArgs, { stdio: 'pipe' });
+    execFileSync('glab', authArgs, { cwd, stdio: 'pipe' });
     return { available: true };
   } catch {
     try {
-      execFileSync('glab', ['--version'], { stdio: 'pipe' });
+      execFileSync('glab', ['--version'], { cwd, stdio: 'pipe' });
       return {
         available: false,
         error: 'glab CLI is installed but not authenticated. Run `glab auth login` first.',
@@ -57,7 +57,7 @@ export function checkGlabCli(cwd: string): CliStatus {
  * Paginates through results until a page returns fewer than `perPage` items
  * or `MAX_PAGES` is reached (whichever comes first).
  */
-export function fetchAllPages<T>(endpoint: string, perPage: number, context: string): T[] {
+export function fetchAllPages<T>(endpoint: string, perPage: number, context: string, cwd: string): T[] {
   const all: T[] = [];
   let page = 1;
 
@@ -65,7 +65,7 @@ export function fetchAllPages<T>(endpoint: string, perPage: number, context: str
     const raw = execFileSync(
       'glab',
       ['api', `${endpoint}${endpoint.includes('?') ? '&' : '?'}per_page=${perPage}&page=${page}`],
-      { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] },
+      { cwd, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] },
     );
     const items = parseJson<T[]>(raw, context);
 

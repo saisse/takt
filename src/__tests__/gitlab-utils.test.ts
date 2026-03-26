@@ -126,6 +126,19 @@ describe('checkGlabCli', () => {
       // Then
       expect(mockGetRemoteHostname).toHaveBeenCalledWith('/my/project/path');
     });
+
+    it('execFileSync に cwd を渡す', () => {
+      // Given
+      mockGetRemoteHostname.mockReturnValue('gitlab.example.com');
+      mockExecFileSync.mockReturnValue('');
+
+      // When
+      checkGlabCli('/worktree/clone');
+
+      // Then: glab auth status の execFileSync に cwd が渡されていること
+      const call = mockExecFileSync.mock.calls[0];
+      expect(call[2]).toHaveProperty('cwd', '/worktree/clone');
+    });
   });
 
   describe('ホスト名が取得できない場合（フォールバック）', () => {
@@ -195,7 +208,7 @@ describe('fetchAllPages', () => {
     const items = [{ id: 1 }, { id: 2 }];
     mockExecFileSync.mockReturnValueOnce(JSON.stringify(items));
 
-    const result = fetchAllPages<{ id: number }>('projects/:id/issues/1/notes', 100, 'test');
+    const result = fetchAllPages<{ id: number }>('projects/:id/issues/1/notes', 100, 'test', '/project');
 
     expect(result).toEqual(items);
     expect(mockExecFileSync).toHaveBeenCalledTimes(1);
@@ -208,7 +221,7 @@ describe('fetchAllPages', () => {
       .mockReturnValueOnce(JSON.stringify(page1))
       .mockReturnValueOnce(JSON.stringify(page2));
 
-    const result = fetchAllPages<{ id: number }>('projects/:id/issues/1/notes', 100, 'test');
+    const result = fetchAllPages<{ id: number }>('projects/:id/issues/1/notes', 100, 'test', '/project');
 
     expect(result).toHaveLength(102);
     expect(mockExecFileSync).toHaveBeenCalledTimes(2);
@@ -221,7 +234,7 @@ describe('fetchAllPages', () => {
       .mockReturnValueOnce(JSON.stringify(page1))
       .mockReturnValueOnce(JSON.stringify(page2));
 
-    fetchAllPages<{ id: number }>('projects/:id/test', 10, 'test');
+    fetchAllPages<{ id: number }>('projects/:id/test', 10, 'test', '/project');
 
     const call1 = mockExecFileSync.mock.calls[0];
     expect((call1[1] as string[])[1]).toContain('page=1');
@@ -234,7 +247,7 @@ describe('fetchAllPages', () => {
     const fullPage = Array.from({ length: 5 }, (_, i) => ({ id: i }));
     mockExecFileSync.mockReturnValue(JSON.stringify(fullPage));
 
-    const result = fetchAllPages<{ id: number }>('projects/:id/test', 5, 'test');
+    const result = fetchAllPages<{ id: number }>('projects/:id/test', 5, 'test', '/project');
 
     // Should stop at 100 pages
     expect(mockExecFileSync).toHaveBeenCalledTimes(100);
@@ -244,7 +257,7 @@ describe('fetchAllPages', () => {
   it('endpoint に既にクエリパラメータがある場合は & で結合する', () => {
     mockExecFileSync.mockReturnValueOnce(JSON.stringify([]));
 
-    fetchAllPages<unknown>('projects/:id/test?sort=asc', 50, 'test');
+    fetchAllPages<unknown>('projects/:id/test?sort=asc', 50, 'test', '/project');
 
     const call = mockExecFileSync.mock.calls[0];
     const apiPath = (call[1] as string[])[1];
@@ -254,7 +267,7 @@ describe('fetchAllPages', () => {
   it('endpoint にクエリパラメータがない場合は ? で結合する', () => {
     mockExecFileSync.mockReturnValueOnce(JSON.stringify([]));
 
-    fetchAllPages<unknown>('projects/:id/test', 50, 'test');
+    fetchAllPages<unknown>('projects/:id/test', 50, 'test', '/project');
 
     const call = mockExecFileSync.mock.calls[0];
     const apiPath = (call[1] as string[])[1];
@@ -264,9 +277,38 @@ describe('fetchAllPages', () => {
   it('不正な JSON の場合はコンテキスト付きエラーをスローする', () => {
     mockExecFileSync.mockReturnValueOnce('invalid');
 
-    expect(() => fetchAllPages<unknown>('endpoint', 50, 'my context')).toThrow(
+    expect(() => fetchAllPages<unknown>('endpoint', 50, 'my context', '/project')).toThrow(
       'glab returned invalid JSON (my context)',
     );
+  });
+
+  it('cwd を execFileSync に渡す', () => {
+    // Given
+    mockExecFileSync.mockReturnValueOnce(JSON.stringify([]));
+
+    // When
+    fetchAllPages<unknown>('projects/:id/test', 50, 'test', '/worktree/clone');
+
+    // Then
+    const call = mockExecFileSync.mock.calls[0];
+    expect(call[2]).toHaveProperty('cwd', '/worktree/clone');
+  });
+
+  it('複数ページ取得時にすべてのページで cwd を execFileSync に渡す', () => {
+    // Given
+    const page1 = Array.from({ length: 10 }, (_, i) => ({ id: i }));
+    const page2 = [{ id: 10 }];
+    mockExecFileSync
+      .mockReturnValueOnce(JSON.stringify(page1))
+      .mockReturnValueOnce(JSON.stringify(page2));
+
+    // When
+    fetchAllPages<{ id: number }>('projects/:id/test', 10, 'test', '/worktree/clone');
+
+    // Then
+    for (const call of mockExecFileSync.mock.calls) {
+      expect(call[2]).toHaveProperty('cwd', '/worktree/clone');
+    }
   });
 });
 
