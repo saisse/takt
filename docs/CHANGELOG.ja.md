@@ -6,6 +6,27 @@
 
 フォーマットは [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) に基づいています。
 
+## [0.33.2] - 2026-03-26
+
+### Added
+
+- 読み取り専用の監査ピースを追加: `audit-architecture`, `audit-architecture-frontend`, `audit-architecture-backend`, `audit-architecture-dual`, `audit-e2e`, `audit-unit`。コードを変更せずにモジュール境界やカバレッジギャップを列挙し、Issue 作成可能なレポートを出力
+
+### Changed
+
+- `security-audit` ピースを `audit-security` にリネーム（監査ピース群の命名規則を統一）
+- ビルトインピースカテゴリを再構成: 🧪 Testing カテゴリを廃止し、監査ピースを 🔍 Review カテゴリに統合
+- `fill-unit`, `fill-e2e` ピースを削除（`audit-unit`, `audit-e2e` に置き換え）
+
+### Fixed
+
+- GitLab セルフホスト環境で worktree（共有クローン）実行時に MR 作成が失敗するバグを修正。Git プロバイダーの `cwd` がクローンパスに正しく伝播するよう変更 (#552)
+
+### Internal
+
+- Git プロバイダーの `cwd` 伝播に関するテストカバレッジを追加
+- 設定ドキュメントから `verbose` オプションの記載を削除し、`logging.level` による設定方法に統一 (#543)
+
 ## [0.33.1] - 2026-03-24
 
 ### Changed
