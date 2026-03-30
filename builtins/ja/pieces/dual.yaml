@@ -6,7 +6,7 @@ piece_config:
       network_access: true
     opencode:
       network_access: true
-max_movements: 30
+max_movements: 60
 initial_movement: plan
 loop_monitors:
   - cycle:
@@ -41,6 +41,7 @@ movements:
       - design-planning
     knowledge:
       - frontend
+      - react
       - backend
       - architecture
     provider_options:
@@ -74,6 +75,7 @@ movements:
       - testing
     knowledge:
       - frontend
+      - react
       - backend
       - architecture
       - unit-testing
@@ -118,6 +120,7 @@ movements:
     session: refresh
     knowledge:
       - frontend
+      - react
       - backend
       - security
       - architecture
@@ -166,6 +169,9 @@ movements:
           format: coder-scope
         - name: coder-decisions.md
           format: coder-decisions
+    quality_gates:
+      - デザイン参照がある場合、主要画面のレイアウト・文言・色・間隔を要素単位で照合したこと
+      - デザイン参照がある場合、プラットフォーム制約による差分は決定ログに明記したこと
   - name: ai_review
     edit: false
     persona: ai-antipattern-reviewer
@@ -200,6 +206,7 @@ movements:
     session: refresh
     knowledge:
       - frontend
+      - react
       - backend
       - security
       - architecture
@@ -248,6 +255,7 @@ movements:
         policy: review
         knowledge:
           - architecture
+          - react
           - backend
         provider_options:
           claude:
@@ -272,7 +280,9 @@ movements:
         policy:
           - review
           - design-fidelity
-        knowledge: frontend
+        knowledge:
+          - frontend
+          - react
         provider_options:
           claude:
             allowed_tools:
@@ -403,6 +413,7 @@ movements:
       - design-fidelity
     knowledge:
       - frontend
+      - react
       - backend
       - security
       - architecture
@@ -419,6 +430,9 @@ movements:
           - WebFetch
     required_permission_mode: edit
     pass_previous_response: false
+    quality_gates:
+      - デザイン参照がある場合、修正でレイアウト・文言・色・間隔の差分を増やしていないこと
+      - デザイン参照がある場合、残差分は決定ログまたはレビュー根拠で説明できること
     rules:
       - condition: 修正が完了した
         next: reviewers_1
@@ -429,7 +443,9 @@ movements:
     edit: false
     persona: dual-supervisor
     policy: review
-    knowledge: architecture
+    knowledge:
+      - architecture
+      - react
     provider_options:
       claude:
         allowed_tools:
