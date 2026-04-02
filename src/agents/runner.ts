@@ -56,8 +56,6 @@ export class AgentRunner {
       cliModel: options?.model,
       personaProviders,
       personaDisplayName,
-      stepProvider: options?.stepProvider,
-      stepModel: options?.stepModel,
       localProvider: localConfig.provider,
       localModel: localConfig.model,
       globalProvider: globalConfig.provider,
