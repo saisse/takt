@@ -154,7 +154,7 @@ describe('postExecutionFlow', () => {
     const result = await postExecutionFlow(baseOptions);
 
     expect(result.prFailed).toBe(true);
-    expect(result.prError).toBe('Failed to create pull request.');
+    expect(result.prError).toBe('Failed to create pull request. Base ref must be a branch');
     expect(result.prUrl).toBeUndefined();
   });
 
@@ -183,7 +183,7 @@ describe('postExecutionFlow', () => {
       '/project',
     );
     expect(result.prFailed).toBe(true);
-    expect(result.prError).toBe('Failed to create pull request.');
+    expect(result.prError).toBe('Failed to create pull request. Base ref must be a branch');
   });
 
   it('origin への push 失敗時は PR 処理へ進まず prFailed: true を返す', async () => {
@@ -262,7 +262,7 @@ describe('postExecutionFlow', () => {
     const result = await postExecutionFlow(baseOptions);
 
     expect(result.prFailed).toBe(true);
-    expect(result.prError).toBe('Failed to create pull request.');
+    expect(result.prError).toBe('Failed to create pull request. --repo is not supported with GitLab provider. Use cwd context instead.');
     expect(result.prUrl).toBeUndefined();
   });
 
