@@ -6,6 +6,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.35.1] - 2026-04-09
+
+### Added
+
+- タスク実行中に常時スピナーを表示: TTY 環境でタスク実行中にアニメーションスピナーを表示し、処理中であることを可視化
+- Claude Headless の thinking ストリーム表示: ヘッドレスモードで thinking トークンをリアルタイム表示。parallel モードでは色分け表示に対応
+
+### Changed
+
+- SIGINT（Ctrl+C）でクローン作成中でも即座にプロセスを終了できるよう改善: `run`/`watch` コマンドで raw mode による即時検知を導入し、git サブプロセスを AbortSignal で中断可能に
+
+### Fixed
+
+- Codex プロバイダが Git リポジトリ外での実行を拒否する問題を修正
+
+### Internal
+
+- StatusLine の wrapWrite をアロー関数にリファクタリング
+- StreamDisplay のハンドラーをムーブメントごとにキャッシュするよう最適化
+- クローン作成関連のテスト追加・更新
+
 ## [0.35.0] - 2026-04-07
 
 ### Added
