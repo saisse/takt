@@ -243,25 +243,29 @@ steps:
     persona: coder
     edit: true
     required_permission_mode: edit
-    allowed_tools: [Read, Glob, Grep, Edit, Write, Bash, WebSearch, WebFetch]
+    provider_options:
+      claude:
+        allowed_tools: [Read, Glob, Grep, Edit, Write, Bash, WebSearch, WebFetch]
     rules:
       - condition: Implementation complete
         next: review
       - condition: Cannot proceed
         next: ABORT
-    instruction_template: |
+    instruction: |
       Implement the requested changes.
 
   - name: review
     persona: reviewer
     edit: false
-    allowed_tools: [Read, Glob, Grep, WebSearch, WebFetch]
+    provider_options:
+      claude:
+        allowed_tools: [Read, Glob, Grep, WebSearch, WebFetch]
     rules:
       - condition: Approved
         next: COMPLETE
       - condition: Needs fix
         next: implement
-    instruction_template: |
+    instruction: |
       Review the implementation for code quality and best practices.
 ```
 
